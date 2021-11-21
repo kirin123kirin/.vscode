@@ -1,0 +1,292 @@
+{
+  // Variable Example
+  // ${workspaceFolder}	/home/your-username/your-project
+  // ${workspaceFolderBasename}	your-project
+  // ${file}	/home/your-username/your-project/folder/file.ext
+  // ${relativeFile}	folder/file.ext
+  // ${relativeFileDirname}	folder
+  // ${fileBasename}	file.ext
+  // ${fileBasenameNoExtension}	file
+  // ${fileDirname}	/home/your-username/your-project/folder
+  // ${fileExtname}	.ext
+  // ${lineNumber}	VSCodeの編集画面で現在選択されている行番号
+  // ${selectedText}	VSCodeの編集画面で現在選択されているテキスト
+  // ${execPath}	実行中のVS Code実行可能ファイル「code.exe」のアドレス
+  // ${env:xxxxxx} 環境変数
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "Win : Debug C++",
+      "command": "clang++",
+      "args": [
+        "-DNDEBUG",
+        "-g",
+        "-fwrapv",
+        "-O0",
+        "-Wall",
+        "-fstack-protector-strong",
+        "-Wformat",
+        "-Werror=format-security",
+        "-Wdate-time",
+        "-D_FORTIFY_SOURCE=2",
+        "-g",
+        "`/usr/bin/env python3 -c 'import sys;print(\"-I{}/include/python{}.{}\".format(sys.prefix, sys.version_info.major, sys.version_info.minor))'`",
+        "-I${env:PYTHONPATH}/include",
+        "-IC:/usr/lib/include/boost",
+        "-c",
+        "${file}",
+        "-o",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}.o",
+        "&&",
+        "clang++",
+        "-g",
+        "-fstack-protector-strong",
+        "-Wformat",
+        "-Werror=format-security",
+        "-Wdate-time",
+        "-D_FORTIFY_SOURCE=2",
+        "-g",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}.o",
+        "-o",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}.exe"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/build"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "dependsOrder": "sequence",
+      "dependsOn": [],
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "label": "Win : Release C++",
+      "command": "clang++",
+      "args": [
+        "-g",
+        "-fwrapv",
+        "-O2",
+        "-Wall",
+        "-fstack-protector-strong",
+        "-Wformat",
+        "-Werror=format-security",
+        "-Wdate-time",
+        "-D_FORTIFY_SOURCE=2",
+        "-g",
+        "-I${env:PYTHONPATH}/include",
+        "-IC:/usr/lib/include/boost",
+        "-c",
+        "${file}",
+        "-o",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}.o",
+        "&&",
+        "clang++",
+        "-g",
+        "-fstack-protector-strong",
+        "-Wformat",
+        "-Werror=format-security",
+        "-Wdate-time",
+        "-D_FORTIFY_SOURCE=2",
+        "-g",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}.o",
+        "-o",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}.exe"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/build"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "dependsOrder": "sequence",
+      "dependsOn": [],
+      "group": "build"
+    },
+
+    {
+      "type": "shell",
+      "label": "Linux : Debug C++",
+      "command": "clang++",
+      "args": [
+        "-pthread",
+        "-DNDEBUG",
+        "-g",
+        "-fwrapv",
+        "-O0",
+        "-Wall",
+        "-fstack-protector-strong",
+        "-Wformat",
+        "-Werror=format-security",
+        "-Wdate-time",
+        "-D_FORTIFY_SOURCE=2",
+        "-fPIC",
+        "-g",
+        "-I/usr/include",
+        "-I/usr/local/include",
+        "`/usr/bin/env python3 -c 'import sys;print(\"-I{}/include/python{}.{}\".format(sys.prefix, sys.version_info.major, sys.version_info.minor))'`",
+        "-I/usr/include/boost",
+        "-c",
+        "${file}",
+        "-o",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}.o",
+        "&&",
+        "clang++",
+        "-pthread",
+        "-Wl,-O1",
+        "-Wl,-Bsymbolic-functions",
+        "-Wl,-z,relro",
+        "-g",
+        "-fstack-protector-strong",
+        "-Wformat",
+        "-Werror=format-security",
+        "-Wdate-time",
+        "-D_FORTIFY_SOURCE=2",
+        "-g",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}.o",
+        "-o",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/build"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "dependsOrder": "sequence",
+      "dependsOn": [],
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "label": "Linux : Release C++",
+      "command": "clang++",
+      "args": [
+        "-pthread",
+        "-g",
+        "-fwrapv",
+        "-O2",
+        "-Wall",
+        "-fstack-protector-strong",
+        "-Wformat",
+        "-Werror=format-security",
+        "-Wdate-time",
+        "-D_FORTIFY_SOURCE=2",
+        "-fPIC",
+        "-g",
+        "-I/usr/include",
+        "-I/usr/local/include",
+        "`/usr/bin/env python3 -c 'import sys;print(\"-I{}/include/python{}.{}\".format(sys.prefix, sys.version_info.major, sys.version_info.minor))'`",
+        "-I/usr/include/boost",
+        "-c",
+        "${file}",
+        "-o",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}.o",
+        "&&",
+        "clang++",
+        "-pthread",
+        "-Wl,-O1",
+        "-Wl,-Bsymbolic-functions",
+        "-Wl,-z,relro",
+        "-g",
+        "-fstack-protector-strong",
+        "-Wformat",
+        "-Werror=format-security",
+        "-Wdate-time",
+        "-D_FORTIFY_SOURCE=2",
+        "-g",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}.o",
+        "-o",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/build"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "dependsOrder": "sequence",
+      "dependsOn": [],
+      "group": "build"
+    },
+
+    {
+      "type": "process",
+      "label": "Win : ReleaseSetup.py",
+      "command": "python",
+      "args": [
+        "setup.py",
+        "build",
+        "-f"
+      ],
+      "group": //"build",
+      {
+        "kind": "build",
+        "isDefault": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+    },
+    {
+      "type": "process",
+      "label": "Win : DebugSetup.py",
+      "command": "python",
+      "args": [
+        "setup.py",
+        "build",
+        "-gf"
+      ],
+      "group": //"build",
+      {
+        "kind": "build",
+        "isDefault": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+    },
+  ]
+}

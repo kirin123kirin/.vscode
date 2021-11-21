@@ -1,0 +1,233 @@
+{
+  // Variable Example
+  // ${workspaceFolder}	/home/your-username/your-project
+  // ${workspaceFolderBasename}	your-project
+  // ${file}	/home/your-username/your-project/folder/file.ext
+  // ${relativeFile}	folder/file.ext
+  // ${relativeFileDirname}	folder
+  // ${fileBasename}	file.ext
+  // ${fileBasenameNoExtension}	file
+  // ${fileDirname}	/home/your-username/your-project/folder
+  // ${fileExtname}	.ext
+  // ${lineNumber}	VSCodeの編集画面で現在選択されている行番号
+  // ${selectedText}	VSCodeの編集画面で現在選択されているテキスト
+  // ${execPath}	実行中のVS Code実行可能ファイル「code.exe」のアドレス
+  // ${env:xxxxxx} 環境変数
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Win : C++ Debug",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/${fileBasenameNoExtension}.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "preLaunchTask": "Win : Debug C++",
+      "console": "internalConsole"
+    },
+    {
+      "name": "Win : C++ Release",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/${fileBasenameNoExtension}.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "preLaunchTask": "Win : Release C++",
+      "console": "internalConsole"
+    },
+    {
+      "name": "Win : Debug Setup.py",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "python",
+      "args": [
+        "-m",
+        "pytest",
+        ".."
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/build",
+      "environment": [],
+      "preLaunchTask": "Win : DebugSetup.py",
+      "console": "internalConsole"
+    },
+    {
+      "name": "Win : Release Setup.py",
+      "type": "python",
+      "request": "launch",
+      "program": "-m",
+      "args": [
+        "pytest",
+        ".."
+      ],
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}/build",
+      "preLaunchTask": "Win : ReleaseSetup.py",
+      "console": "internalConsole"
+    },
+    {
+      "name": "Win : Instant Debug from py",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "python",
+      "args": [
+        "${file}"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "console": "internalConsole",
+      "preLaunchTask": "Win : DebugSetup.py"
+    },
+    {
+      "name": "Win : Instant Release from py",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "python",
+      "args": [
+        "${file}"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/build",
+      "environment": [],
+      "console": "internalConsole",
+      "preLaunchTask": "Win : ReleaseSetup.py"
+    },
+    {
+      "name": "linux : C++ Debug",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/${fileBasenameNoExtension}",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "preLaunchTask": "linux : Debug C++",
+      "console": "internalConsole"
+    },
+    {
+      "name": "linux : C++ Release",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/${fileBasenameNoExtension}",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "preLaunchTask": "linux : Release C++",
+      "console": "internalConsole"
+    },
+    {
+      "name": "linux : Debug Setup.py",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "/usr/bin/python3",
+      "args": [
+        "-m",
+        "pytest",
+        ".."
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/build",
+      "environment": [],
+      "preLaunchTask": "linux : DebugSetup.py",
+      "console": "internalConsole"
+    },
+    {
+      "name": "linux : Release Setup.py",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "/usr/bin/python3",
+      "args": [
+        "-m",
+        "pytest",
+        ".."
+      ],
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}/build",
+      "preLaunchTask": "linux : ReleaseSetup.py",
+      "console": "internalConsole"
+    },
+    {
+      "name": "linux : Instant Debug from py",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "/usr/bin/python3",
+      "args": [
+        "${file}"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable reformat of gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "miDebuggerPath": "/usr/bin/gdb",
+      "miDebuggerArgs": "-q -ex quit; wait() { fg >/dev/null; }; /usr/bin/gdb -q -f --interpreter=mi",
+      "preLaunchTask": "linux : DebugSetup.py",
+      "console": "internalConsole"
+    },
+    {
+      "name": "linux : Instant Release from py",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "/usr/bin/python3",
+      "args": [
+        "${file}"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable reformat of gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "miDebuggerPath": "/usr/bin/gdb",
+      "miDebuggerArgs": "-q -ex quit; wait() { fg >/dev/null; }; /usr/bin/gdb -q -f --interpreter=mi",
+      "preLaunchTask": "linux : ReleaseSetup.py",
+      "console": "internalConsole"
+    },
+    {
+      "name": "Python: Normal Run",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "internalConsole"
+    },
+    {
+      "name": "html-js Debug",
+      "request": "launch",
+      "type": "chrome",
+      "internalConsoleOptions": "openOnSessionStart",
+      "file": "${file}",
+      // "url": "http://localhost:3000/src/index.html",
+      "webRoot": "${workspaceFolder}/src/",
+      // "sourceMaps": true,
+      "trace": true,
+      "runtimeExecutable": "stable",
+      "runtimeArgs": [
+        // "--headless",
+        // "--disable-gpu",
+        // "--remote-debugging-port=9222",
+        "--incognito" //private mode
+        ],
+    },
+  ]
+}
