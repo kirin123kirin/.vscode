@@ -365,8 +365,9 @@
         "span": "cpp",
         "*.inc": "cpp",
         "generator": "cpp",
-        "*.txt": "cpp",
+        "CMakeLists.txt": "CMake",
         "*.html": "cpp",
         "cp950": "cpp"
     },
+    "C_Cpp.errorSquiggles": "Enabled",
 }
