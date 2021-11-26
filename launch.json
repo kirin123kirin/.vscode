@@ -196,13 +196,20 @@
       "preLaunchTask": "linux : Release Setup.py"
     },
     {
+      "name": "Pure Python: Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    },
+    {
       "name": "html-js Debug",
       "request": "launch",
       "type": "chrome",
       "internalConsoleOptions": "openOnSessionStart",
       "file": "${file}",
-      // "url": "http://localhost:3000/${workspaceFolderBasename}/index.html",
-      "webRoot": "${workspaceFolder}/${workspaceFolderBasename}/",
+      // "url": "http://localhost:3000/src/index.html",
+      "webRoot": "${workspaceFolder}/src/",
       // "sourceMaps": true,
       "trace": true,
       "runtimeExecutable": "stable",
