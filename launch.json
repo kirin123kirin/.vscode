@@ -200,7 +200,14 @@
       "type": "python",
       "request": "launch",
       "program": "${file}",
-      "console": "integratedTerminal"
+      "args": [
+      ],
+      "justMyCode": false, //inner library debug
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {
+        // "PYTHONPATH": "${workspaceFolder}"
+      }
     },
     {
       "name": "html-js Debug",
