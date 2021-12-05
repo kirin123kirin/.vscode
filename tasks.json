@@ -91,6 +91,31 @@
     },
     {
       "type": "shell",
+      "label": "pre_makedir",
+      "command": "mkdir",
+      "args": [
+        "build",
+        ">/dev/null",
+        "2>&1",
+        "||",
+        "echo",
+        "made build directory"
+      ],
+      "windows": {
+        "args": [
+          "build",
+          ">nul",
+          "2>&1",
+          "||",
+          "echo",
+          "made build directory"
+          // "chcp",
+          // "65001",
+        ],
+      },
+    },
+    {
+      "type": "shell",
       "label": "CMake Debug Build",
       "group": "build",
       "command": "cmake",
@@ -216,19 +241,11 @@
       "type": "shell",
       "label": "Debug C++",
       "group": "build",
-      "command": "mkdir",
+      "command": "clang++",
       // http://solid.kmckk.com/doc/skit/current/solid_toolchain/overview.html
       // https://clang.llvm.org/docs/ClangCommandLineReference.html
       "windows": {
         "args": [
-          "build",
-          ">nul",
-          "2>&1",
-          "||",
-          "chcp",
-          "65001",
-          "&&",
-          "clang++",
           "-v",
           "-D_${workspaceFolderBasename}_EXPORTS",
           "-I${env:PYTHONPATH}/include",
@@ -302,11 +319,6 @@
         ],
       },
       "args": [
-        "${workspaceFolder}/build",
-        ">/dev/null",
-        "2>&1",
-        "||",
-        "clang++",
         "-v",
         "-D_${workspaceFolderBasename}_EXPORTS",
         "-g",
@@ -361,25 +373,19 @@
         "Linker Sucess!!!!!!!!!!!!!"
       ],
       "dependsOrder": "sequence",
-      "dependsOn": [],
+      "dependsOn": [
+        "pre_makedir"
+      ],
     },
     {
       "type": "shell",
       "label": "Release C++",
       "group": "build",
-      "command": "mkdir",
+      "command": "clang++",
       // http://solid.kmckk.com/doc/skit/current/solid_toolchain/overview.html
       // https://clang.llvm.org/docs/ClangCommandLineReference.html
       "windows": {
         "args": [
-          "build",
-          ">nul",
-          "2>&1",
-          "||",
-          "chcp",
-          "65001",
-          "&&",
-          "clang++",
           "-v",
           "-D_${workspaceFolderBasename}_EXPORTS",
           "-I${env:PYTHONPATH}/include",
@@ -452,11 +458,6 @@
         ],
       },
       "args": [
-        "${workspaceFolder}/build",
-        ">/dev/null",
-        "2>&1",
-        "||",
-        "clang++",
         "-v",
         "-D_${workspaceFolderBasename}_EXPORTS",
         "-g",
@@ -510,7 +511,9 @@
         "Linker Sucess!!!!!!!!!!!!!"
       ],
       "dependsOrder": "sequence",
-      "dependsOn": [],
+      "dependsOn": [
+        "pre_makedir"
+      ],
     },
     {
       "type": "process",
