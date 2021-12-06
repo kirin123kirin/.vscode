@@ -52,9 +52,9 @@
       "name": "Instant Debug from py",
       "type": "lldb",
       "request": "launch",
-      "program": "python",
+      "program": "python3",
       "windows": {
-        "program": "python3",
+        "program": "python",
       },
       "args": [
         "${file}"
@@ -69,9 +69,9 @@
       "name": "Instant Release from py",
       "type": "lldb",
       "request": "launch",
-      "program": "python",
+      "program": "python3",
       "windows": {
-        "program": "python3",
+        "program": "python",
       },
       "args": [
         "${file}"
@@ -96,9 +96,9 @@
       "name": "Debug Setup.py",
       "type": "lldb",
       "request": "launch",
-      "program": "python",
+      "program": "python3",
       "windows": {
-        "program": "python3",
+        "program": "python",
       },
       "args": [
         "-m",
@@ -115,9 +115,9 @@
       "name": "Release Setup.py",
       "type": "lldb",
       "request": "launch",
-      "program": "python",
+      "program": "python3",
       "windows": {
-        "program": "python3",
+        "program": "python",
       },
       "args": [
         "-m",
