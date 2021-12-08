@@ -530,6 +530,10 @@
         "build",
         "-gf"
       ],
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "CLEANUP"
+      ],
     },
     {
       "type": "process",
@@ -542,6 +546,10 @@
       "args": [
         "setup.py",
         "build"
+      ],
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "CLEANUP"
       ],
     },
   ]
