@@ -10,44 +10,58 @@ setx PYENV_ROOT %DATAROOT%\.pyenv
 setx POETRY_HOME %DATAROOT%\.local
 setx PYENV %DATAROOT%\.pyenv\pyenv-win
 setx VISUAL_STUDIO_HOME %IDEROOT%\usr\local\vs
-setx PYPATHES %PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts\%PYTHONPATH%;Tools\scripts;%POETRY_HOME%\bin
-setx Path %Path%;%APPROOT%;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%PYPATHES%;%VSCODE_HOME%\bin
+setx PYPATHES %PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin
+exit
 ```
 
 コマンドプロンプト再起動
 
 ```
+setx Path %Path%;%APPROOT%;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%PYPATHES%;%VSCODE_HOME%\bin
 mkdir %IDEROOT%
 mkdir %DATAROOT%
+exit
 ```
-
-## テキストエディタ
-### サクラエディタ(https://github.com/sakura-editor/sakura/releases)
-[v2.4.1](https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Exe.zip)
 
 ## 圧縮解凍ソフト
 ### [7zip](https://sevenzip.osdn.jp/download.html)
 [v21.06](https://www.7-zip.org/a/7z2106-x64.exe)
 
-## SCM
-### [Git for Windows](https://github.com/git-for-windows/git/releases)
+インストールパス：%IDEROOT%\bin
+
+## [Git for Windows](https://github.com/git-for-windows/git/releases)
 [v2.34.1](https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.exe)
+
+インストールパス：%IDEROOT%\bin
+
+#TODO
+
+## テキストエディタ
+### サクラエディタ(https://github.com/sakura-editor/sakura/releases) [v2.4.1](https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Exe.zip)
+
+```
+curl -sSL -o %TEMP%\sakura.zip https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Exe.zip
+7z x -o %IDEROOT%\bin %TEMP%\sakura.zip
+del /s /q %TEMP%\sakura.zip
+```
 
 ## 開発環境
 ## Python
 ### [Python poetry pyenvインストール手順](https://qiita.com/kerobot/items/3f4064d5174676080585)
 #### [python](https://www.python.org/ftp/python/)
 [v3.9.9](https://www.python.org/ftp/python/3.9.9/python-3.9.9.exe)
-→GUIインストール
+→GUIインストール(TODO)
 
 
 ```
 curl -sSL -o %TEMP%\dev_d.msi https://www.python.org/ftp/python/3.9.9/amd64/dev_d.msi
-msiexec /a %TEMP%\dev_d.msi targetdir="%IDEROOT%\usr\local\python" /qn # python39_d.libが欲しい
-del /s /q %IDEROOT%\usr\local\python\libs\dev_d.msi %TEMP%\dev_d.msi
+msiexec /a %TEMP%\dev_d.msi targetdir="%IDEROOT%\usr\local\python" /qn
+del /s /q %TEMP%\dev_d.msi
 python -m pip install --upgrade pip
-
+mv %LOCALAPPDATA%\Microsoft\WindowsApps\python.exe %LOCALAPPDATA%\Microsoft\WindowsApps\_python.exe
+mv %LOCALAPPDATA%\Microsoft\WindowsApps\python3.exe %LOCALAPPDATA%\Microsoft\WindowsApps\_python3.exe
 ```
+* python39_d.libのため
 
 #### [poetry](https://github.com/python-poetry/poetry)
 
@@ -64,13 +78,17 @@ poetry config cache-dir "%POETRY_HOME%\pypoetry\Cache"
 #### [pyenv](https://github.com/pyenv/pyenv.git)
 
 ```
+cd %DATAROOT%
 pip install pyenv-win --target %DATAROOT%\.pyenv
 pyenv --version
-grep -rl "chcp 1250" .pyenv | xargs sed -i "s/chcp 1250/chcp 65001/g" [#pyenv Issue51:](https://github.com/pyenv-win/pyenv-win/issues/51)
+chcp
+grep -rl "chcp 1250" .pyenv | xargs sed -i "s/chcp 1250/chcp 65001/g"
 pyenv rehash
+chcp
 pyenv update
 pyenv install -l
 ```
+[#pyenv Issue51: chcp1250](https://github.com/pyenv-win/pyenv-win/issues/51)
 
 #### [Microsoft BuildTools](https://visualstudio.microsoft.com/ja/visual-cpp-build-tools/)
 [VS 2022](https://aka.ms/vs/17/release/vs_BuildTools.exe)
@@ -95,8 +113,22 @@ Download -> GUI Installer
 
 ** Development Promptはパスの通ったところに配置する
 ```
+
+cd "C:\Program Files (x86)\Windows Kits\10"
+cp -R */include %IDEROOT%/usr/local/
+cp -R */Lib/*/*/x64/* %IDEROOT%/usr/local/lib/
+cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC"
+cp -R Auxiliary %IDEROOT%/usr/local/
+cp -R Redist %IDEROOT%/usr/local/
+cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC"
+cp -R */*/lib/x64/* %IDEROOT%/usr/local/lib/
+cp -R */include/* %IDEROOT%/usr/local/include/
+cp -R */crt %IDEROOT%/usr/local/
+cp -R */bin/Hostx64/x64 %IDEROOT%/usr/local/bin
+
 echo @call "%VISUAL_STUDIO_HOME%\tools\Common7\Tools\vcvarsall.bat" x64 %* > %IDEROOT%\bin\vcvars64.bat
 echo @call "%VISUAL_STUDIO_HOME%\tools\Common7\Tools\vcvarsall.bat" x86 %* > %IDEROOT%\bin\vcvars32.bat
+exit
 ```
 
 #### [LLVM](https://github.com/llvm/llvm-project/releases)
