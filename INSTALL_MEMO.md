@@ -9,7 +9,7 @@ setx PYTHONPATH %IDEROOT%\usr\local\python
 setx PYENV_ROOT %DATAROOT%\.pyenv
 setx POETRY_HOME %DATAROOT%\.local
 setx PYENV %DATAROOT%\.pyenv\pyenv-win
-setx VISUAL_STUDIO_HOME %IDEROOT%\usr\local\vs
+setx VISUAL_STUDIO_HOME %IDEROOT%\usr\local
 setx PYPATHES %PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin
 exit
 ```
@@ -113,21 +113,21 @@ Download -> GUI Installer
 
 ** Development Promptはパスの通ったところに配置する
 ```
-
-cd "C:\Program Files (x86)\Windows Kits\10"
-cp -R */include %IDEROOT%/usr/local/
-cp -R */Lib/*/*/x64/* %IDEROOT%/usr/local/lib/
-cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC"
-cp -R Auxiliary %IDEROOT%/usr/local/
-cp -R Redist %IDEROOT%/usr/local/
-cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC"
-cp -R */*/lib/x64/* %IDEROOT%/usr/local/lib/
-cp -R */include/* %IDEROOT%/usr/local/include/
-cp -R */crt %IDEROOT%/usr/local/
-cp -R */bin/Hostx64/x64 %IDEROOT%/usr/local/bin
+bash
+_VISUAL_STUDIO_HOME=$(echo "$VISUAL_STUDIO_HOME" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
+cp -R "/C/Program Files (x86)/Windows Kits/10/include" $_VISUAL_STUDIO_HOME/
+cp -R "/C/Program Files (x86)/Windows Kits/10/Lib/*/*/x64/*" $_VISUAL_STUDIO_HOME/lib/
+cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Auxiliary" $_VISUAL_STUDIO_HOME/
+cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Redist" $_VISUAL_STUDIO_HOME/
+cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/*/lib/x64/*" $_VISUAL_STUDIO_HOME/lib/
+cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/*/include/*" $_VISUAL_STUDIO_HOME/include/
+cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/*/crt" $_VISUAL_STUDIO_HOME
+cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/*/bin/Hostx64/x64" $_VISUAL_STUDIO_HOME/bin
+exit
 
 echo @call "%VISUAL_STUDIO_HOME%\tools\Common7\Tools\vcvarsall.bat" x64 %* > %IDEROOT%\bin\vcvars64.bat
 echo @call "%VISUAL_STUDIO_HOME%\tools\Common7\Tools\vcvarsall.bat" x86 %* > %IDEROOT%\bin\vcvars32.bat
+
 exit
 ```
 
