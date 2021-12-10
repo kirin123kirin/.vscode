@@ -92,10 +92,13 @@ pyenv global %PYTHONVERSION%
 pyenv --version
 chcp
 grep -rl "chcp 1250" * | xargs sed -i "s/chcp 1250/chcp 65001/g"
+
 pyenv rehash
 chcp
+
 pyenv update
 pyenv install -l
+
 ```
 * [grep & sed をする理由 -> #pyenv Issue51](https://github.com/pyenv-win/pyenv-win/issues/51)
 
