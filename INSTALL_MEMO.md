@@ -131,6 +131,7 @@ poetry self update
 poetry config --list
 poetry config virtualenvs.in-project true
 poetry config cache-dir "%POETRY_HOME%\pypoetry\Cache"
+
 ```
 
 
@@ -187,6 +188,7 @@ rd /s /q %TEMP%\cmake
 curl -sSL -o%TEMP%\ninja.zip https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip
 7z x -o%IDEROOT%\bin %TEMP%\ninja.zip
 del /s /q %TEMP%\ninja.zip
+
 ```
 
 #### [VSCode](https://code.visualstudio.com/)
@@ -196,6 +198,7 @@ del /s /q %TEMP%\ninja.zip
 curl -sSL -o "%TEMP%\download_vscode.zip" "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive"
 7z x -aoa -o"%VSCODE_HOME%" "%TEMP%\download_vscode.zip"
 del /s /q "%TEMP%\download_vscode.zip"
+
 ```
 
 ##### VSCode restore private setting
@@ -206,4 +209,5 @@ for /f %n in (%TEMP%\vscode_extensions.txt) do (code --install-extension %n)
 del /s /q %TEMP%\vscode_extensions.txt
 curl -sSL -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/settings.json
 curl -sSL -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
+
 ```
