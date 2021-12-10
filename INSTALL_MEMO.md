@@ -30,9 +30,8 @@ setx MSVC "%MSVC_ROOT%\Community\VC\Tools\MSVC\14.29.30037"
 
 setx INCLUDE "%IDEROOT%\include;%PYTHONPATH%\include;%IDEROOT%\usr\include;%IDEROOT%\usr\local\include;%MSVC%\ATLMFC\include;%MSVC%\include;%WKIT%\include\10.0.18362.0\ucrt;%WKIT%\include\10.0.18362.0\shared;%WKIT%\include\10.0.18362.0\um;%WKIT%\include\10.0.18362.0\winrt;%WKIT%\include\10.0.18362.0\cppwinrt"
 setx LIBPATH "%IDEROOT%\lib;%PYTHONPATH%\libs;%IDEROOT%\usr\lib;%IDEROOT%\usr\local\lib;%WKIT%\Lib"
-
-
 exit
+
 ```
 * PYTHONVERSIONは pyenvで指定可能なバージョン
 
@@ -41,6 +40,7 @@ setx Path "%Path%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%APPROOT%
 mkdir %IDEROOT%
 mkdir %DATAROOT%
 exit
+
 ```
 
 ## はじめに
@@ -76,6 +76,7 @@ exit
 curl -sSL -o %TEMP%\py.zip https://www.python.org/ftp/python/3.9.9/python-3.9.9-embed-amd64.zip
 7z x -o%TEMP%\pytmp %TEMP%\py.zip
 set Path=%TEMP%\pytmp;%Path%
+
 ```
 
 #### [pyenv](https://github.com/pyenv/pyenv.git)
@@ -112,9 +113,12 @@ for /d %d in (*) do (
   sleep 1
   del /s /q %TEMP%\dev_d_%d.msi
 )
+
 python -m pip install --upgrade pip
+
 mv %LOCALAPPDATA%\Microsoft\WindowsApps\python.exe %LOCALAPPDATA%\Microsoft\WindowsApps\_python.exe
 mv %LOCALAPPDATA%\Microsoft\WindowsApps\python3.exe %LOCALAPPDATA%\Microsoft\WindowsApps\_python3.exe
+
 ```
 * dev_d.msiをダウンロードしている理由 -> python39_d.libが欲しいため
 
