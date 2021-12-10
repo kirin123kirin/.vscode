@@ -1,6 +1,12 @@
 # Windows 10 64bit C++,Pythonの開発環境構築
 
 * IDE : Visual Studio Code
+   * cpp extention
+   * python extention
+   * markdown extention
+   * Git Lense
+   * Histroy
+   * etc..
 * C/C++ : Clang/LLVM
 * C/C++ header & library : Windows10 SDK & MSVC Build
 * python : pyenv & poetry
@@ -11,7 +17,7 @@
 
 ## 環境変数設定
 
-```
+```powershell
 setx IDEROOT C:\ide
 setx VSCODE_HOME %IDEROOT%\VSCode
 setx USRLOCAL %IDEROOT%\usr\local
@@ -34,7 +40,7 @@ exit
 ```
 * PYTHONVERSIONは pyenvで指定可能なバージョン
 
-```
+```powershell
 setx Path "%Path%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%PYPATHES%;%VSCODE_HOME%\bin"
 mkdir %IDEROOT%
 mkdir %DATAROOT%
@@ -42,7 +48,7 @@ exit
 
 ```
 
-## はじめに
+## とりあえず入れるもの
 ### [7zip](https://sevenzip.osdn.jp/download.html)
 インストーラー -> [v21.06 直リンク](https://www.7-zip.org/a/7z2106-x64.exe)
 ### [サクラエディタ](https://github.com/sakura-editor/sakura/releases)
@@ -54,12 +60,12 @@ exit
 現時点での最新版のこれを使う
 https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.tar.bz2
 
-```
+```powershell
 powershell wget https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.tar.bz2 -OutFile %TEMP%\git-for-windows.tar.bz2
 echo %IDEROOT%にインストールしてます
 7z x %TEMP%\git-for-windows.tar.bz2 -so | 7z x -si -ttar -o%IDEROOT%
 del /s /q %TEMP%\git-for-windows.tar.bz2
-exit
+
 ```
 
 * このエラーは出てもよい
@@ -71,7 +77,7 @@ exit
  pyenv インストールまでの一時的な環境なのでembedを使う。pyenvインストール後はすぐ消してしまう
  https://www.python.org/ftp/python/3.9.9/python-3.9.9-embed-amd64.zip
 
-```
+```powershell
 curl -L -o %TEMP%\py.zip https://www.python.org/ftp/python/3.9.9/python-3.9.9-embed-amd64.zip
 7z x -o%TEMP%\pytmp %TEMP%\py.zip
 set Path=%TEMP%\pytmp;%Path%
@@ -80,7 +86,7 @@ set Path=%TEMP%\pytmp;%Path%
 
 #### [pyenv](https://github.com/pyenv/pyenv.git)
 
-```
+```powershell
 curl -L https://bootstrap.pypa.io/get-pip.py | python - install pyenv-win --target %PYENV_ROOT%
 cd %PYENV_ROOT%
 rm -rf bin *distutil* install* pip* pkg_resources setuptools* wheel*
@@ -88,32 +94,37 @@ rd /s /q %TEMP%\pytmp
 del %TEMP%\py.zip
 
 pyenv install %PYTHONVERSION%
+
+echo "python %PYTHONVERSION% の他に必要なバージョンがあればここで入れてください。
+
+```
+
+#### pyenvの初期設定
+
+```powershell
+
 pyenv global %PYTHONVERSION%
 pyenv --version
-chcp
+
 grep -rl "chcp 1250" * | xargs sed -i "s/chcp 1250/chcp 65001/g"
+echo sedする理由は https://github.com/pyenv-win/pyenv-win/issues/51
 
 pyenv rehash
-chcp
 
 pyenv update
 pyenv install -l
 
-```
-* [grep & sed をする理由 -> #pyenv Issue51](https://github.com/pyenv-win/pyenv-win/issues/51)
-
-
-```
 cd %PYENV%\versions
 for /d %d in (*) do (
+  python -m pip install --upgrade pip
+  pip install setuptools wheel autopep8 flake8 pytest
+
+  echo debug用ライブラリをダウンロードしてます
   curl -L -o %TEMP%\dev_d_%d.msi https://www.python.org/ftp/python/%d/amd64/dev_d.msi
   sleep 1
   msiexec /a %TEMP%\dev_d_%d.msi targetdir="%PYENV%\versions\%d" /qn
-  sleep 1
   del /s /q %TEMP%\dev_d_%d.msi
 )
-
-python -m pip install --upgrade pip
 
 mv %LOCALAPPDATA%\Microsoft\WindowsApps\python.exe %LOCALAPPDATA%\Microsoft\WindowsApps\_python.exe
 mv %LOCALAPPDATA%\Microsoft\WindowsApps\python3.exe %LOCALAPPDATA%\Microsoft\WindowsApps\_python3.exe
@@ -123,7 +134,7 @@ mv %LOCALAPPDATA%\Microsoft\WindowsApps\python3.exe %LOCALAPPDATA%\Microsoft\Win
 
 
 #### [poetry](https://github.com/python-poetry/poetry)
-```
+```powershell
 curl -L https://install.python-poetry.org | python -
 poetry --version
 poetry self update
@@ -136,18 +147,21 @@ poetry config cache-dir "%POETRY_HOME%\pypoetry\Cache"
 ### C/C++ Build Tool
 #### [LLVM](https://github.com/llvm/llvm-project/releases) & [CMake](https://cmake.org/download/) & [Ninja](https://github.com/ninja-build/ninja/releases)
 
-```
+```powershell
+echo LLVM インストール...
 curl -L -o %TEMP%\llvm.zip https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/LLVM-13.0.0-win64.exe
 7z x -o%IDEROOT% %TEMP%\llvm.zip
 del %TEMP%\llvm.zip
 rd /s /q %IDEROOT%\\$PLUGINSDIR
 
+echo CMake インストール...
 curl -L -o %TEMP%\cmake.zip https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-windows-x86_64.zip
 7z x -o%TEMP%\cmake %TEMP%\cmake.zip
 bash -c "cp -fR $TEMP/cmake/cmake*/* $IDEROOT/"
 del %TEMP%\cmake.zip
 rd /s /q %TEMP%\cmake
 
+echo Ninja インストール...
 curl -L -o%TEMP%\ninja.zip https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip
 7z x -o%IDEROOT%\bin %TEMP%\ninja.zip
 del /s /q %TEMP%\ninja.zip
@@ -162,9 +176,8 @@ del /s /q %TEMP%\ninja.zip
  * MSVC x64 ビルド ツール 最新
  * Windows 10 SDK
 
-##### Development Promptはパスの通ったところに配置する
-
-```
+##### ここはやらなくてもよいが、VSのヘッダーとライブラリをコピーしてる
+```bash
 
 cd %USRLOCAL%
 bash
@@ -190,26 +203,37 @@ echo @call ^"^%MSVC_ROOT^%\BuildTools\VC\Auxiliary\Build\vcvarsall.bat^" %* > %I
 echo @call ^"^%MSVC_ROOT^%\BuildTools\VC\Auxiliary\Build\vcvarsall.bat^" x64 %* > %IDEROOT%\bin\vcvars64.bat
 echo @call ^"^%MSVC_ROOT^%\BuildTools\VC\Auxiliary\Build\vcvarsall.bat^" x86 %* > %IDEROOT%\bin\vcvars32.bat
 
-exit
 ```
 
 #### [VSCode](https://code.visualstudio.com/)
 [latest zip data](https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive)
 
-```
+```powershell
+echo VSCodeインストールしてます
 curl -L -o "%TEMP%\download_vscode.zip" "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive"
 7z x -aoa -o"%VSCODE_HOME%" "%TEMP%\download_vscode.zip"
 del /s /q "%TEMP%\download_vscode.zip"
+
+echo ショートカットを作成してます
+set TARGET='%VSCODE_HOME%\Code.exe'
+set SHORTCUT='%APPDATA%\Microsoft\Windows\Start Menu\Code.lnk'
+powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.Save()"
+cp %SHORTCUT% %USERPROFILE%\Desktop
 
 ```
 
 ##### VSCode 個人的な初期設定一括
 
-```
+```powershell
+echo 拡張機能をインストールします
 curl -L -o %TEMP%\vscode_extensions.txt https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt
 for /f %n in (%TEMP%\vscode_extensions.txt) do (code --install-extension %n)
 del /s /q %TEMP%\vscode_extensions.txt
+
+echo 全般設定の設定中
 curl -L -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/settings.json
+
+echo キーバインドの設定中
 curl -L -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
 
 code
@@ -220,8 +244,11 @@ mshta vbscript:execute("MsgBox(""ステータスバーのダウンロードが�
 ### Git config global & PyPI config
 ユーザ名とEmailを入力してください。
 
-```
+```bash
+echo git configとpypircの設定を行います。
+
 bash
+
 cat<<EOF > ~/.gitconfig
 [user]
 	       email = 
@@ -258,7 +285,6 @@ EOF
 
 notepad ~/.pypirc
 
-exit
 exit
 
 ```
