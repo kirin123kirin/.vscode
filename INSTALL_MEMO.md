@@ -256,7 +256,7 @@ password:
 
 EOF
 
-notepad ~/.gitconfig
+notepad ~/.pypirc
 
 exit
 exit
