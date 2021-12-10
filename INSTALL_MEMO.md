@@ -5,16 +5,16 @@ setx IDEROOT C:\ide
 setx VSCODE_HOME %IDEROOT%\VSCode
 setx DATAROOT C:\data
 setx APPROOT %IDEROOT%\bin
-setx PYTHONPATH %IDEROOT%\usr\local\python
 setx PYENV_ROOT %DATAROOT%\.pyenv
-setx POETRY_HOME %DATAROOT%\.local
 setx PYENV %DATAROOT%\.pyenv\pyenv-win
+setx PYTHONVERSION 3.9.6
+setx PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
+setx POETRY_HOME %DATAROOT%\.local
 setx VISUAL_STUDIO_HOME %IDEROOT%\usr\local
 setx PYPATHES %PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin
 exit
 ```
-
-コマンドプロンプト再起動
+* PYTHONVERSIONは pyenvで指定可能なバージョン
 
 ```
 setx Path %Path%;%APPROOT%;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%PYPATHES%;%VSCODE_HOME%\bin
@@ -46,25 +46,50 @@ del /s /q %TEMP%\sakura.zip
 ```
 
 ## 開発環境
-## Python
-### [Python poetry pyenvインストール手順](https://qiita.com/kerobot/items/3f4064d5174676080585)
+## Python(pyenv運用)
 #### [python](https://www.python.org/ftp/python/)
-[v3.9.9](https://www.python.org/ftp/python/3.9.9/python-3.9.9.exe)
-→GUIインストール(TODO)
+[インストール用にv3.9.9 embedを使う](https://www.python.org/ftp/python/3.9.9/python-3.9.9-embed-amd64.zip)
+
+```
+curl -sSL -o %TEMP%\py.zip https://www.python.org/ftp/python/3.9.9/python-3.9.9-embed-amd64.zip
+7z x -o%TEMP%\pytmp %TEMP%\py.zip
+set Path=%TEMP%\pytmp;%Path%
+```
+
+#### [pyenv](https://github.com/pyenv/pyenv.git)
+
+```
+curl -sSL https://bootstrap.pypa.io/get-pip.py | python - install pyenv-win --target %DATAROOT%\.pyenv
+cd %DATAROOT%\.pyenv
+rm -rf bin *distutil* install* pip* pkg_resources setuptools* wheel*
+rd /s /q %TEMP%\pytmp
+
+cd %DATAROOT%
+pyenv install %PYTHONVERSION%
+pyenv global %PYTHONVERSION%
+pyenv --version
+chcp
+grep -rl "chcp 1250" .pyenv | xargs sed -i "s/chcp 1250/chcp 65001/g"
+pyenv rehash
+chcp
+pyenv update
+pyenv install -l
+```
+* [grep & sed をする理由 -> #pyenv Issue51](https://github.com/pyenv-win/pyenv-win/issues/51)
 
 
 ```
-curl -sSL -o %TEMP%\dev_d.msi https://www.python.org/ftp/python/3.9.9/amd64/dev_d.msi
-msiexec /a %TEMP%\dev_d.msi targetdir="%IDEROOT%\usr\local\python" /qn
+curl -sSL -o %TEMP%\dev_d.msi https://www.python.org/ftp/python/%PYTHONVERSION%/amd64/dev_d.msi
+msiexec /a %TEMP%\dev_d.msi targetdir="%PYTHONPATH%" /qn
 del /s /q %TEMP%\dev_d.msi
 python -m pip install --upgrade pip
 mv %LOCALAPPDATA%\Microsoft\WindowsApps\python.exe %LOCALAPPDATA%\Microsoft\WindowsApps\_python.exe
 mv %LOCALAPPDATA%\Microsoft\WindowsApps\python3.exe %LOCALAPPDATA%\Microsoft\WindowsApps\_python3.exe
 ```
-* python39_d.libのため
+* dev_d.msiをダウンロードしている理由 -> python39_d.libが欲しいため
+
 
 #### [poetry](https://github.com/python-poetry/poetry)
-
 ```
 cd %DATAROOT%
 curl -sSL https://install.python-poetry.org | python -
@@ -75,20 +100,6 @@ poetry config virtualenvs.in-project true
 poetry config cache-dir "%POETRY_HOME%\pypoetry\Cache"
 ```
 
-#### [pyenv](https://github.com/pyenv/pyenv.git)
-
-```
-cd %DATAROOT%
-pip install pyenv-win --target %DATAROOT%\.pyenv
-pyenv --version
-chcp
-grep -rl "chcp 1250" .pyenv | xargs sed -i "s/chcp 1250/chcp 65001/g"
-pyenv rehash
-chcp
-pyenv update
-pyenv install -l
-```
-[#pyenv Issue51: chcp1250](https://github.com/pyenv-win/pyenv-win/issues/51)
 
 #### [Microsoft BuildTools](https://visualstudio.microsoft.com/ja/visual-cpp-build-tools/)
 [VS 2022](https://aka.ms/vs/17/release/vs_BuildTools.exe)
