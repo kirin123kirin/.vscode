@@ -1,3 +1,14 @@
+# Windows 10 64bit C++,Pythonの開発環境構築
+
+* IDE : Visual Studio Code
+* C/C++ : Clang/LLVM
+* C/C++ header & library : Windows10 SDK & MSVC Build
+* python : pyenv & poetry
+* SCM : Git for Windows
+* etc : 7zip, sakura editor
+
+2021/12/10 最新版
+
 ## 環境変数設定
 
 ```
@@ -31,33 +42,24 @@ mkdir %DATAROOT%
 exit
 ```
 
-## 圧縮解凍ソフト
+## はじめに
 ### [7zip](https://sevenzip.osdn.jp/download.html)
-[v21.06](https://www.7-zip.org/a/7z2106-x64.exe)
+インストーラー -> [v21.06](https://www.7-zip.org/a/7z2106-x64.exe)
+### サクラエディタ(https://github.com/sakura-editor/sakura/releases)
+インストーラー -> [v2.4.1](https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Installer.zip)
 
-普通にインストール
+適当にインストール
 
 ## [Git for Windows](https://github.com/git-for-windows/git/releases)
 [v2.34.1](https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.tar.bz2)
 
-### %IDEROOT%\binにインストールします
-
 ```
-cd %USERPROFILE%\Downloads
-powershell wget https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.tar.bz2 -OutFile git-for-windows.tar.bz2
-7z x Git-2.34.1-64-bit.tar.bz2 -so | 7z x -si -o%IDEROOT%
-del /s /q git-for-windows.tar.bz2
+powershell wget https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.tar.bz2 -OutFile %TEMP%\git-for-windows.tar.bz2
+7z x %TEMP%\Git-2.34.1-64-bit.tar.bz2 -so | 7z x -si -o%IDEROOT%
+del /s /q %TEMP%\git-for-windows.tar.bz2
 exit
 ```
-
-## テキストエディタ
-### サクラエディタ(https://github.com/sakura-editor/sakura/releases) [v2.4.1](https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Exe.zip)
-
-```
-curl -sSL -o %TEMP%\sakura.zip https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Exe.zip
-7z x -o %IDEROOT%\bin %TEMP%\sakura.zip
-del /s /q %TEMP%\sakura.zip
-```
+* %IDEROOT%\binにインストールしてます
 
 ## 開発環境
 ## Python(pyenv運用)
