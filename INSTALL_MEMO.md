@@ -72,7 +72,7 @@ exit
  https://www.python.org/ftp/python/3.9.9/python-3.9.9-embed-amd64.zip
 
 ```
-curl -sSL -o %TEMP%\py.zip https://www.python.org/ftp/python/3.9.9/python-3.9.9-embed-amd64.zip
+curl -L -o %TEMP%\py.zip https://www.python.org/ftp/python/3.9.9/python-3.9.9-embed-amd64.zip
 7z x -o%TEMP%\pytmp %TEMP%\py.zip
 set Path=%TEMP%\pytmp;%Path%
 
@@ -81,7 +81,7 @@ set Path=%TEMP%\pytmp;%Path%
 #### [pyenv](https://github.com/pyenv/pyenv.git)
 
 ```
-curl -sSL https://bootstrap.pypa.io/get-pip.py | python - install pyenv-win --target %PYENV_ROOT%
+curl -L https://bootstrap.pypa.io/get-pip.py | python - install pyenv-win --target %PYENV_ROOT%
 cd %PYENV_ROOT%
 rm -rf bin *distutil* install* pip* pkg_resources setuptools* wheel*
 rd /s /q %TEMP%\pytmp
@@ -106,7 +106,7 @@ pyenv install -l
 ```
 cd %PYENV%\versions
 for /d %d in (*) do (
-  curl -sSL -o %TEMP%\dev_d_%d.msi https://www.python.org/ftp/python/%d/amd64/dev_d.msi
+  curl -L -o %TEMP%\dev_d_%d.msi https://www.python.org/ftp/python/%d/amd64/dev_d.msi
   sleep 1
   msiexec /a %TEMP%\dev_d_%d.msi targetdir="%PYENV%\versions\%d" /qn
   sleep 1
@@ -124,7 +124,7 @@ mv %LOCALAPPDATA%\Microsoft\WindowsApps\python3.exe %LOCALAPPDATA%\Microsoft\Win
 
 #### [poetry](https://github.com/python-poetry/poetry)
 ```
-curl -sSL https://install.python-poetry.org | python -
+curl -L https://install.python-poetry.org | python -
 poetry --version
 poetry self update
 poetry config --list
@@ -137,18 +137,18 @@ poetry config cache-dir "%POETRY_HOME%\pypoetry\Cache"
 #### [LLVM](https://github.com/llvm/llvm-project/releases) & [CMake](https://cmake.org/download/) & [Ninja](https://github.com/ninja-build/ninja/releases)
 
 ```
-curl -sSL -o %TEMP%\llvm.zip https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/LLVM-13.0.0-win64.exe
+curl -L -o %TEMP%\llvm.zip https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/LLVM-13.0.0-win64.exe
 7z x -o%IDEROOT% %TEMP%\llvm.zip
 del %TEMP%\llvm.zip
 rd /s /q %IDEROOT%\\$PLUGINSDIR
 
-curl -sSL -o %TEMP%\cmake.zip https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-windows-x86_64.zip
+curl -L -o %TEMP%\cmake.zip https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-windows-x86_64.zip
 7z x -o%TEMP%\cmake %TEMP%\cmake.zip
 bash -c "cp -fR $TEMP/cmake/cmake*/* $IDEROOT/"
 del %TEMP%\cmake.zip
 rd /s /q %TEMP%\cmake
 
-curl -sSL -o%TEMP%\ninja.zip https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip
+curl -L -o%TEMP%\ninja.zip https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip
 7z x -o%IDEROOT%\bin %TEMP%\ninja.zip
 del /s /q %TEMP%\ninja.zip
 
@@ -197,7 +197,7 @@ exit
 [latest zip data](https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive)
 
 ```
-curl -sSL -o "%TEMP%\download_vscode.zip" "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive"
+curl -L -o "%TEMP%\download_vscode.zip" "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive"
 7z x -aoa -o"%VSCODE_HOME%" "%TEMP%\download_vscode.zip"
 del /s /q "%TEMP%\download_vscode.zip"
 
@@ -206,10 +206,10 @@ del /s /q "%TEMP%\download_vscode.zip"
 ##### VSCode restore private setting
 
 ```
-curl -sSL -o %TEMP%\vscode_extensions.txt https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt
+curl -L -o %TEMP%\vscode_extensions.txt https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt
 for /f %n in (%TEMP%\vscode_extensions.txt) do (code --install-extension %n)
 del /s /q %TEMP%\vscode_extensions.txt
-curl -sSL -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/settings.json
-curl -sSL -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
+curl -L -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/settings.json
+curl -L -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
 
 ```
