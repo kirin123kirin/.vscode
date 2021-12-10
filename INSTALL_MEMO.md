@@ -134,19 +134,36 @@ poetry config cache-dir "%POETRY_HOME%\pypoetry\Cache"
 
 ```
 
+### C/C++ Build Tool
+#### [LLVM](https://github.com/llvm/llvm-project/releases) & [CMake](https://cmake.org/download/) & [Ninja](https://github.com/ninja-build/ninja/releases)
 
+```
+curl -sSL -o %TEMP%\llvm.zip https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/LLVM-13.0.0-win64.exe
+7z x -axr!*PLUGINSDIR -o%IDEROOT% %TEMP%\llvm.zip
+del %TEMP%\llvm.zip
+
+curl -sSL -o %TEMP%\cmake.zip https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-windows-x86_64.zip
+7z x -o%TEMP%\cmake %TEMP%\cmake.zip
+bash -c "cp -fR $TEMP/cmake/cmake*/* $IDEROOT/"
+del %TEMP%\cmake.zip
+rd /s /q %TEMP%\cmake
+
+curl -sSL -o%TEMP%\ninja.zip https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip
+7z x -o%IDEROOT%\bin %TEMP%\ninja.zip
+del /s /q %TEMP%\ninja.zip
+
+```
+
+### C/C++ Windows headers & libraries
 #### [Microsoft BuildTools](https://visualstudio.microsoft.com/ja/visual-cpp-build-tools/)
-[VS 2022](https://aka.ms/vs/17/release/vs_BuildTools.exe)
-Download -> GUI Installer
+インストーラ → [VSBuildTools(2022) 直リンク](https://aka.ms/vs/17/release/vs_BuildTools.exe)
 
-##### Change Install Path
-* 個別のコンポーネント : select
- ** MSVC v142 xxxxx ビルドツール
- ** Windows 10 SDK
+* 個別のコンポーネント : 検索窓で以下の２つを最低限選択する
+ * MSVC v142 xxxxx ビルドツール
+ * Windows 10 SDK
 
-Download -> GUI Installer
+##### Development Promptはパスの通ったところに配置する
 
-** Development Promptはパスの通ったところに配置する
 ```
 <!--
 bash
@@ -166,29 +183,6 @@ echo @call "%MSVC_ROOT%\tools\Common7\Tools\vcvarsall.bat" x64 %* > %IDEROOT%\bi
 echo @call "%MSVC_ROOT%\tools\Common7\Tools\vcvarsall.bat" x86 %* > %IDEROOT%\bin\vcvars32.bat
 
 exit
-```
-
-### C/C++ Build Tool
-#### [LLVM](https://github.com/llvm/llvm-project/releases) & [CMake](https://cmake.org/download/) & [Ninja](https://github.com/ninja-build/ninja/releases)
-[llvm v13.0.0](https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/LLVM-13.0.0-win64.exe)
-[Cmake v3.22.1](https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-windows-x86_64.zip)
-[Ninja v1.10.2](https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip)
-
-```
-curl -sSL -o %TEMP%\llvm.zip https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/LLVM-13.0.0-win64.exe
-7z x -axr!*PLUGINSDIR -o%IDEROOT% %TEMP%\llvm.zip
-del %TEMP%\llvm.zip
-
-curl -sSL -o %TEMP%\cmake.zip https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-windows-x86_64.zip
-7z x -o%TEMP%\cmake %TEMP%\cmake.zip
-bash -c "cp -fR $TEMP/cmake/cmake*/* $IDEROOT/"
-del %TEMP%\cmake.zip
-rd /s /q %TEMP%\cmake
-
-curl -sSL -o%TEMP%\ninja.zip https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip
-7z x -o%IDEROOT%\bin %TEMP%\ninja.zip
-del /s /q %TEMP%\ninja.zip
-
 ```
 
 #### [VSCode](https://code.visualstudio.com/)
