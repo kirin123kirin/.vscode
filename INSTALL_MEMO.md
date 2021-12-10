@@ -35,7 +35,7 @@ exit
 * PYTHONVERSIONは pyenvで指定可能なバージョン
 
 ```
-setx Path "%Path%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%PYPATHES%;%VSCODE_HOME%\bin"
+setx Path "%Path%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%PYPATHES%;%VSCODE_HOME%\bin"
 mkdir %IDEROOT%
 mkdir %DATAROOT%
 exit
@@ -170,17 +170,18 @@ cd %USRLOCAL%
 bash
 WKIT_S=$(echo "$WKIT" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
 MSVC_ROOT_S=$(echo "$MSVC_ROOT" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
+USRLOCAL_S=$(echo "$USRLOCAL" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
 
 mkdir include lib
 
-cp -R "$WKIT_S/include/*/*" include/
-cp -R "$WKIT_S/Lib/*/*/x64/*" lib/
-cp -R "$MSVC_ROOT_S/BuildTools/VC/Auxiliary" .
-cp -R "$MSVC_ROOT_S/BuildTools/VC/Redist" .
-cp -R "$MSVC_ROOT_S/BuildTools/VC/Tools/MSVC/*/lib/x64/*" lib/
-cp -R "$MSVC_ROOT_S/BuildTools/VC/Tools/MSVC/*/include/*" include/
-cp -R "$MSVC_ROOT_S/BuildTools/VC/Tools/MSVC/*/crt" .
-cp -R "$MSVC_ROOT_S/BuildTools/VC/Tools/MSVC/*/bin/Hostx64/x64" bin
+cp -R "$WKIT_S"/include/*/* include/
+cp -R "$WKIT_S"/Lib/*/*/x64/* lib/
+cp -R "$MSVC_ROOT_S"/BuildTools/VC/Auxiliary .
+cp -R "$MSVC_ROOT_S"/BuildTools/VC/Redist .
+cp -R "$MSVC_ROOT_S"/BuildTools/VC/Tools/MSVC/*/lib/x64/* lib/
+cp -R "$MSVC_ROOT_S"/BuildTools/VC/Tools/MSVC/*/include/* include/
+cp -R "$MSVC_ROOT_S"/BuildTools/VC/Tools/MSVC/*/crt .
+cp -R "$MSVC_ROOT_S"/BuildTools/VC/Tools/MSVC/*/bin/Hostx64/x64 bin
 exit
 
 
