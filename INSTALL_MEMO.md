@@ -25,7 +25,7 @@ setx POETRY_HOME %USRLOCAL%\poetry
 setx PYPATHES %PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin
 setx WKIT "C:\Program Files (x86)\Windows Kits\10"
 setx MSVC_ROOT "C:\Program Files (x86)\Microsoft Visual Studio\2022"
-setx MSVC "%MSVC_ROOT%\Community\VC\Tools\MSVC\14.29.30037"
+setx MSVC "%MSVC_ROOT%\BuildTools\VC\Tools\MSVC\14.29.30705"
 
 setx INCLUDE "%IDEROOT%\include;%PYTHONPATH%\include;%IDEROOT%\usr\include;%IDEROOT%\usr\local\include;%MSVC%\ATLMFC\include;%MSVC%\include;%WKIT%\include\10.0.18362.0\ucrt;%WKIT%\include\10.0.18362.0\shared;%WKIT%\include\10.0.18362.0\um;%WKIT%\include\10.0.18362.0\winrt;%WKIT%\include\10.0.18362.0\cppwinrt"
 setx LIBPATH "%IDEROOT%\lib;%PYTHONPATH%\libs;%IDEROOT%\usr\lib;%IDEROOT%\usr\local\lib;%WKIT%\Lib"
