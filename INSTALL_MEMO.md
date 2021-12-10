@@ -171,14 +171,16 @@ bash
 WKIT_S=$(echo "$WKIT" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
 MSVC_ROOT_S=$(echo "$MSVC_ROOT" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
 
-cp -R "$WKIT_S/include" .
+mkdir include lib
+
+cp -R "$WKIT_S/include/*/*" include/
 cp -R "$WKIT_S/Lib/*/*/x64/*" lib/
-cp -R "$MSVC_ROOT_S/Community/VC/Auxiliary" .
-cp -R "$MSVC_ROOT_S/Community/VC/Redist" .
-cp -R "$MSVC_ROOT_S/Community/VC/Tools/MSVC/*/lib/x64/*" lib/
-cp -R "$MSVC_ROOT_S/Community/VC/Tools/MSVC/*/include/*" include/
-cp -R "$MSVC_ROOT_S/Community/VC/Tools/MSVC/*/crt" .
-cp -R "$MSVC_ROOT_S/Community/VC/Tools/MSVC/*/bin/Hostx64/x64" bin
+cp -R "$MSVC_ROOT_S/BuildTools/VC/Auxiliary" .
+cp -R "$MSVC_ROOT_S/BuildTools/VC/Redist" .
+cp -R "$MSVC_ROOT_S/BuildTools/VC/Tools/MSVC/*/lib/x64/*" lib/
+cp -R "$MSVC_ROOT_S/BuildTools/VC/Tools/MSVC/*/include/*" include/
+cp -R "$MSVC_ROOT_S/BuildTools/VC/Tools/MSVC/*/crt" .
+cp -R "$MSVC_ROOT_S/BuildTools/VC/Tools/MSVC/*/bin/Hostx64/x64" bin
 exit
 
 
