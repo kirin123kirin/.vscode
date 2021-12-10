@@ -3,15 +3,23 @@
 ```
 setx IDEROOT C:\ide
 setx VSCODE_HOME %IDEROOT%\VSCode
+setx USRLOCAL %IDEROOT%\usr\local
 setx DATAROOT C:\data
 setx APPROOT %IDEROOT%\bin
-setx PYENV_ROOT %DATAROOT%\.pyenv
-setx PYENV %DATAROOT%\.pyenv\pyenv-win
+setx PYENV_ROOT %USRLOCAL%\pyenv
+setx PYENV %PYENV_ROOT%\pyenv-win
 setx PYTHONVERSION 3.9.6
 setx PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
-setx POETRY_HOME %DATAROOT%\.local
-setx VISUAL_STUDIO_HOME %IDEROOT%\usr\local
+setx POETRY_HOME %USRLOCAL%\poetry
+
 setx PYPATHES %PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin
+setx WKIT "C:\Program Files (x86)\Windows Kits\10"
+setx MSVC "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.29.30037"
+
+setx INCLUDE "%INCLUDE%;%IDEROOT%\include;%PYTHONPATH%\include;%IDEROOT%\usr\include;%IDEROOT%\usr\local\include;%MSVC%\ATLMFC\include;%MSVC%\include;%WKIT%\include\10.0.18362.0\ucrt;%WKIT%\include\10.0.18362.0\shared;%WKIT%\include\10.0.18362.0\um;%WKIT%\include\10.0.18362.0\winrt;%WKIT%\include\10.0.18362.0\cppwinrt"
+setx LIBPATH "%LIBPATH%;%IDEROOT%\lib;%PYTHONPATH%\libs;%IDEROOT%\usr\lib;%IDEROOT%\usr\local\lib;%WKIT%\Lib"
+
+
 exit
 ```
 * PYTHONVERSIONは pyenvで指定可能なバージョン
@@ -65,17 +73,17 @@ set Path=%TEMP%\pytmp;%Path%
 #### [pyenv](https://github.com/pyenv/pyenv.git)
 
 ```
-curl -sSL https://bootstrap.pypa.io/get-pip.py | python - install pyenv-win --target %DATAROOT%\.pyenv
-cd %DATAROOT%\.pyenv
+curl -sSL https://bootstrap.pypa.io/get-pip.py | python - install pyenv-win --target %PYENV_ROOT%
+cd %PYENV_ROOT%
 rm -rf bin *distutil* install* pip* pkg_resources setuptools* wheel*
 rd /s /q %TEMP%\pytmp
 
-cd %DATAROOT%
+cd %PYENV_ROOT%
 pyenv install %PYTHONVERSION%
 pyenv global %PYTHONVERSION%
 pyenv --version
 chcp
-grep -rl "chcp 1250" .pyenv | xargs sed -i "s/chcp 1250/chcp 65001/g"
+grep -rl "chcp 1250" * | xargs sed -i "s/chcp 1250/chcp 65001/g"
 pyenv rehash
 chcp
 pyenv update
@@ -134,12 +142,12 @@ bash
 _VISUAL_STUDIO_HOME=$(echo "$VISUAL_STUDIO_HOME" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
 cp -R "/C/Program Files (x86)/Windows Kits/10/include" $_VISUAL_STUDIO_HOME/
 cp -R "/C/Program Files (x86)/Windows Kits/10/Lib/*/*/x64/*" $_VISUAL_STUDIO_HOME/lib/
-cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Auxiliary" $_VISUAL_STUDIO_HOME/
-cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Redist" $_VISUAL_STUDIO_HOME/
-cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/*/lib/x64/*" $_VISUAL_STUDIO_HOME/lib/
-cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/*/include/*" $_VISUAL_STUDIO_HOME/include/
-cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/*/crt" $_VISUAL_STUDIO_HOME
-cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/*/bin/Hostx64/x64" $_VISUAL_STUDIO_HOME/bin
+cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2022/Community/VC/Auxiliary" $_VISUAL_STUDIO_HOME/
+cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2022/Community/VC/Redist" $_VISUAL_STUDIO_HOME/
+cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/*/lib/x64/*" $_VISUAL_STUDIO_HOME/lib/
+cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/*/include/*" $_VISUAL_STUDIO_HOME/include/
+cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/*/crt" $_VISUAL_STUDIO_HOME
+cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/*/bin/Hostx64/x64" $_VISUAL_STUDIO_HOME/bin
 exit
 
 echo @call "%VISUAL_STUDIO_HOME%\tools\Common7\Tools\vcvarsall.bat" x64 %* > %IDEROOT%\bin\vcvars64.bat
