@@ -16,7 +16,6 @@ setx IDEROOT C:\ide
 setx VSCODE_HOME %IDEROOT%\VSCode
 setx USRLOCAL %IDEROOT%\usr\local
 setx DATAROOT C:\data
-setx APPROOT %IDEROOT%\bin
 setx PYENV_ROOT %USRLOCAL%\pyenv
 setx PYENV %PYENV_ROOT%\pyenv-win
 setx PYTHONVERSION 3.9.6
@@ -36,7 +35,7 @@ exit
 * PYTHONVERSIONは pyenvで指定可能なバージョン
 
 ```
-setx Path "%Path%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%APPROOT%;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%PYPATHES%;%VSCODE_HOME%\bin"
+setx Path "%Path%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%PYPATHES%;%VSCODE_HOME%\bin"
 mkdir %IDEROOT%
 mkdir %DATAROOT%
 exit
@@ -160,28 +159,33 @@ del /s /q %TEMP%\ninja.zip
 インストーラ → [VSBuildTools(2022) 直リンク](https://aka.ms/vs/17/release/vs_BuildTools.exe)
 
 * 個別のコンポーネント : 検索窓で以下の２つを最低限選択する
- * MSVC v142 xxxxx ビルドツール
+ * MSVC x64 ビルド ツール 最新
  * Windows 10 SDK
 
 ##### Development Promptはパスの通ったところに配置する
 
 ```
-<!--
-bash
-_VISUAL_STUDIO_HOME=$(echo "$VISUAL_STUDIO_HOME" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
-cp -R "/C/Program Files (x86)/Windows Kits/10/include" $_VISUAL_STUDIO_HOME/
-cp -R "/C/Program Files (x86)/Windows Kits/10/Lib/*/*/x64/*" $_VISUAL_STUDIO_HOME/lib/
-cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2022/Community/VC/Auxiliary" $_VISUAL_STUDIO_HOME/
-cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2022/Community/VC/Redist" $_VISUAL_STUDIO_HOME/
-cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/*/lib/x64/*" $_VISUAL_STUDIO_HOME/lib/
-cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/*/include/*" $_VISUAL_STUDIO_HOME/include/
-cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/*/crt" $_VISUAL_STUDIO_HOME
-cp -R "/C/Program Files (x86)/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/*/bin/Hostx64/x64" $_VISUAL_STUDIO_HOME/bin
--->
 
-echo @call "%MSVC_ROOT%\tools\Common7\Tools\vcvarsall.bat" %* > %IDEROOT%\bin\vcvarsall.bat
-echo @call "%MSVC_ROOT%\tools\Common7\Tools\vcvarsall.bat" x64 %* > %IDEROOT%\bin\vcvars64.bat
-echo @call "%MSVC_ROOT%\tools\Common7\Tools\vcvarsall.bat" x86 %* > %IDEROOT%\bin\vcvars32.bat
+cd %USRLOCAL%
+bash
+WKIT_S=$(echo "$WKIT" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
+MSVC_ROOT_S=$(echo "$MSVC_ROOT" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
+
+cp -R "$WKIT_S/include" .
+cp -R "$WKIT_S/Lib/*/*/x64/*" lib/
+cp -R "$MSVC_ROOT_S/Community/VC/Auxiliary" .
+cp -R "$MSVC_ROOT_S/Community/VC/Redist" .
+cp -R "$MSVC_ROOT_S/Community/VC/Tools/MSVC/*/lib/x64/*" lib/
+cp -R "$MSVC_ROOT_S/Community/VC/Tools/MSVC/*/include/*" include/
+cp -R "$MSVC_ROOT_S/Community/VC/Tools/MSVC/*/crt" .
+cp -R "$MSVC_ROOT_S/Community/VC/Tools/MSVC/*/bin/Hostx64/x64" bin
+exit
+
+
+echo @call ^"^%MSVC_ROOT^%\BuildTools\Common7\Tools\VsDevCmd.bat^" %* > %IDEROOT%\bin\vsdevcmd.bat
+echo @call ^"^%MSVC_ROOT^%\BuildTools\VC\Auxiliary\Build\vcvarsall.bat^" %* > %IDEROOT%\bin\vcvarsall.bat
+echo @call ^"^%MSVC_ROOT^%\BuildTools\VC\Auxiliary\Build\vcvarsall.bat^" x64 %* > %IDEROOT%\bin\vcvars64.bat
+echo @call ^"^%MSVC_ROOT^%\BuildTools\VC\Auxiliary\Build\vcvarsall.bat^" x86 %* > %IDEROOT%\bin\vcvars32.bat
 
 exit
 ```
