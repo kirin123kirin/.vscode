@@ -17,7 +17,7 @@ exit
 * PYTHONVERSIONは pyenvで指定可能なバージョン
 
 ```
-setx Path %Path%;%APPROOT%;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%PYPATHES%;%VSCODE_HOME%\bin
+setx Path %Path%;C:\Program Files\7-Zip;%APPROOT%;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%PYPATHES%;%VSCODE_HOME%\bin
 mkdir %IDEROOT%
 mkdir %DATAROOT%
 exit
@@ -27,14 +27,20 @@ exit
 ### [7zip](https://sevenzip.osdn.jp/download.html)
 [v21.06](https://www.7-zip.org/a/7z2106-x64.exe)
 
-インストールパス：%IDEROOT%\bin
+普通にインストール
 
 ## [Git for Windows](https://github.com/git-for-windows/git/releases)
-[v2.34.1](https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.exe)
+[v2.34.1](https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.tar.bz2)
 
-インストールパス：%IDEROOT%\bin
+### %IDEROOT%\binにインストールします
 
-#TODO
+```
+cd %USERPROFILE%\Downloads
+powershell wget https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.tar.bz2 -OutFile git-for-windows.tar.bz2
+7z x Git-2.34.1-64-bit.tar.bz2 -so | 7z x -si -o%IDEROOT%
+del /s /q git-for-windows.tar.bz2
+exit
+```
 
 ## テキストエディタ
 ### サクラエディタ(https://github.com/sakura-editor/sakura/releases) [v2.4.1](https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Exe.zip)
