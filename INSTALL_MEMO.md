@@ -1,4 +1,4 @@
-# Windows 10 64bit C++,Pythonの開発環境構築
+# Windows 10 64bit Python及びC++開発環境構築を構築する
 
 * IDE : Visual Studio Code
    * cpp extention
@@ -13,7 +13,7 @@
 * SCM : Git for Windows
 * etc : 7zip, sakura editor
 
-2021/12/10 最新版
+2021/12/10 時点での最新版を例に以下の手順を示す
 
 ## 環境変数設定
 
@@ -58,7 +58,6 @@ exit
 
 ## [Git for Windows](https://github.com/git-for-windows/git/releases)
 現時点での最新版のこれを使う
-https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.tar.bz2
 
 ```powershell
 powershell wget https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.tar.bz2 -OutFile %TEMP%\git-for-windows.tar.bz2
@@ -74,8 +73,8 @@ del /s /q %TEMP%\git-for-windows.tar.bz2
 ## 開発環境
 ## Python(pyenv運用)
 #### [python](https://www.python.org/ftp/python/)
- pyenv インストールまでの一時的な環境なのでembedを使う。pyenvインストール後はすぐ消してしまう
- https://www.python.org/ftp/python/3.9.9/python-3.9.9-embed-amd64.zip
+ pyenv インストールまでの一時的な環境なのでembedを使う。
+ pyenvインストール後はすぐ消してしまうので
 
 ```powershell
 curl -L -o %TEMP%\py.zip https://www.python.org/ftp/python/3.9.9/python-3.9.9-embed-amd64.zip
@@ -185,6 +184,9 @@ WKIT_S=$(echo "$WKIT" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
 MSVC_ROOT_S=$(echo "$MSVC_ROOT" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
 USRLOCAL_S=$(echo "$USRLOCAL" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
 
+%IDEROOT%\usr\bin\find "%WKIT%" "%MSVC_ROOT%" -type d -regex ".*[lL]ib.*[xd]64$" -printf ";%p" | cut -b 2- | sed "s;/;\\\;g"
+%IDEROOT%\usr\bin\find "%WKIT%" "%MSVC_ROOT%" -type d -name "[iI]nclude" -printf ";%p" | cut -b 2- | sed "s;/;\\\;g"
+
 mkdir include lib
 
 cp -R "$WKIT_S"/include/*/* include/
@@ -206,7 +208,6 @@ echo @call ^"^%MSVC_ROOT^%\BuildTools\VC\Auxiliary\Build\vcvarsall.bat^" x86 %* 
 ```
 
 #### [VSCode](https://code.visualstudio.com/)
-[latest zip data](https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive)
 
 ```powershell
 echo VSCodeインストールしてます
