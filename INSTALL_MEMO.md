@@ -139,8 +139,9 @@ poetry config cache-dir "%POETRY_HOME%\pypoetry\Cache"
 
 ```
 curl -sSL -o %TEMP%\llvm.zip https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/LLVM-13.0.0-win64.exe
-7z x -axr!*PLUGINSDIR -o%IDEROOT% %TEMP%\llvm.zip
+7z x -o%IDEROOT% %TEMP%\llvm.zip
 del %TEMP%\llvm.zip
+rd /s /q %IDEROOT%\\$PLUGINSDIR
 
 curl -sSL -o %TEMP%\cmake.zip https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-windows-x86_64.zip
 7z x -o%TEMP%\cmake %TEMP%\cmake.zip
