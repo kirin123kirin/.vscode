@@ -69,7 +69,7 @@ exit
 ## 開発環境
 ## Python(pyenv運用)
 #### [python](https://www.python.org/ftp/python/)
- pyenv インストールまでの仮のpython環境が必要なだけなので以下のembedを使う
+ pyenv インストールまでの一時的な環境なのでembedを使う。pyenvインストール後はすぐ消してしまう
  https://www.python.org/ftp/python/3.9.9/python-3.9.9-embed-amd64.zip
 
 ```
@@ -85,6 +85,7 @@ curl -sSL https://bootstrap.pypa.io/get-pip.py | python - install pyenv-win --ta
 cd %PYENV_ROOT%
 rm -rf bin *distutil* install* pip* pkg_resources setuptools* wheel*
 rd /s /q %TEMP%\pytmp
+del %TEMP%\py.zip
 
 pyenv install %PYTHONVERSION%
 pyenv global %PYTHONVERSION%
