@@ -203,7 +203,7 @@ del /s /q "%TEMP%\download_vscode.zip"
 
 ```
 
-##### VSCode restore private setting
+##### VSCode 個人的な初期設定一括
 
 ```
 curl -L -o %TEMP%\vscode_extensions.txt https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt
@@ -211,5 +211,54 @@ for /f %n in (%TEMP%\vscode_extensions.txt) do (code --install-extension %n)
 del /s /q %TEMP%\vscode_extensions.txt
 curl -L -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/settings.json
 curl -L -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
+
+code
+mshta vbscript:execute("MsgBox(""ステータスバーのダウンロードが完了するまで待ってVSCodeを再起動してください""):close")
+
+```
+
+### Git config global & PyPI config
+ユーザ名とEmailを入力してください。
+
+```
+bash
+cat<<EOF > ~/.gitconfig
+[user]
+	       email = 
+	       name = 
+[filter "lfs"]
+	       clean = git-lfs clean -- %f
+	       smudge = git-lfs smudge -- %f
+	       process = git-lfs filter-process
+	       required = true
+[gui]
+	       encoding = utf-8
+[core]
+        autocrlf = input
+EOF
+
+notepad ~/.gitconfig
+
+cat<<EOF > ~/.pypirc
+[distutils]
+index-servers=
+    pypi
+    pypitest
+
+[pypi]
+username: 
+password: 
+
+#[pypitest]
+#repository: https://test.pypi.org/legacy/
+#username : 
+#password : 
+
+EOF
+
+notepad ~/.gitconfig
+
+exit
+exit
 
 ```
