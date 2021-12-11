@@ -8,7 +8,7 @@
    * Histroy
    * etc..
 * C/C++ : Clang/LLVM
-* C/C++ header & library : Windows10 SDK & MSVC Build
+* C/C++ header & library : 最低限のWindows10 SDK & MSVC Build
 * python : pyenv & poetry
 * SCM : Git for Windows
 * etc : 7zip, sakura editor
@@ -21,32 +21,25 @@
 setx IDEROOT C:\ide
 setx VSCODE_HOME %IDEROOT%\VSCode
 setx USRLOCAL %IDEROOT%\usr\local
-setx DATAROOT C:\data
 setx PYENV_ROOT %USRLOCAL%\pyenv
 setx PYENV %PYENV_ROOT%\pyenv-win
 setx PYTHONVERSION 3.9.6
 setx PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
 setx POETRY_HOME %USRLOCAL%\poetry
 
-setx PYPATHES %PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin
+set Path_="%Path%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura"
+set Path_="%Path_%;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin"
+setx Path "%Path_%;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin"
 
 exit
 
 ```
 * PYTHONVERSIONは pyenvで指定可能なバージョン
 
-```powershell
-setx Path "%Path%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%PYPATHES%;%VSCODE_HOME%\bin"
-mkdir %IDEROOT%
-mkdir %DATAROOT%
-exit
-
-```
-
 ## とりあえず入れるもの
-### [7zip](https://sevenzip.osdn.jp/download.html)
+### [7zip](https://sevenzip.osdn.jp/download.html) は必須
 インストーラー -> [v21.06 直リンク](https://www.7-zip.org/a/7z2106-x64.exe)
-### [サクラエディタ](https://github.com/sakura-editor/sakura/releases)
+### エディタはなんでもよいが、[サクラエディタ](https://github.com/sakura-editor/sakura/releases)
 インストーラー -> [v2.4.1 直リンク](https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Installer.zip)
 
 適当にインストール
