@@ -51,10 +51,13 @@ exit
 現時点での最新版をインストール
 
 ```powershell
-powershell wget https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.tar.bz2 -OutFile %TEMP%\git-for-windows.tar.bz2
+mkdir %IDEROOT%\usr\bin
+powershell Invoke-WebRequest -UseBasicParsing -Uri https://github.com/webfolderio/wget-windows/releases/download/1.21.2/wget-1.21.2-64bit-GnuTLS.zip -OutFile %TEMP%\wget.zip
+7z x -o%IDEROOT%\usr\bin %TEMP%\wget.zip
+wget.exe -O %TEMP%\git-for-windows.tar.bz2 https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.tar.bz2
 echo %IDEROOT%にインストールしてます
-7z x %TEMP%\git-for-windows.tar.bz2 -so | 7z x -si -ttar -o%IDEROOT%
-del /s /q %TEMP%\git-for-windows.tar.bz2
+7z x %TEMP%\git-for-windows.tar.bz2 -so | 7z x -si -ttar -o%IDEROOT% -aoa
+del /s /q %TEMP%\git-for-windows.tar.bz2 %TEMP%\wget.zip
 
 ```
 * このエラーは出てもよい
@@ -190,6 +193,8 @@ cp %SHORTCUT% %USERPROFILE%\Desktop
 curl -L -o %TEMP%\node.zip https://nodejs.org/dist/v16.13.1/node-v16.13.1-win-x64.zip
 7z x -o%TEMP% %TEMP%\node.zip
 mv "%TEMP%"/node-v* "%NODEJS_HOME%"
+node --version
+npm --version
 rm -rf %TEMP%/node.zip %TEMP%/node-v*
 ```
 
