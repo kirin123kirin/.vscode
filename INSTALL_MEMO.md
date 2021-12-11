@@ -29,12 +29,7 @@ setx PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
 setx POETRY_HOME %USRLOCAL%\poetry
 
 setx PYPATHES %PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin
-setx WKIT "C:\Program Files (x86)\Windows Kits\10"
-setx MSVC_ROOT "C:\Program Files (x86)\Microsoft Visual Studio\2022"
-setx MSVC "%MSVC_ROOT%\BuildTools\VC\Tools\MSVC\14.29.30705"
 
-setx INCLUDE "%IDEROOT%\include;%PYTHONPATH%\include;%IDEROOT%\usr\include;%IDEROOT%\usr\local\include;%MSVC%\ATLMFC\include;%MSVC%\include;%WKIT%\include\10.0.18362.0\ucrt;%WKIT%\include\10.0.18362.0\shared;%WKIT%\include\10.0.18362.0\um;%WKIT%\include\10.0.18362.0\winrt;%WKIT%\include\10.0.18362.0\cppwinrt"
-setx LIBPATH "%IDEROOT%\lib;%PYTHONPATH%\libs;%IDEROOT%\usr\lib;%IDEROOT%\usr\local\lib;%WKIT%\Lib"
 exit
 
 ```
@@ -175,35 +170,78 @@ del /s /q %TEMP%\ninja.zip
  * MSVC x64 ビルド ツール 最新
  * Windows 10 SDK
 
-##### ここはやらなくてもよいが、VSのヘッダーとライブラリをコピーしてる
-```bash
+```powershell
+set ARCH=x64
+set WKIT_ROOT "C:\Program Files (x86)\Windows Kits"
+set MSVC_ROOT "C:\Program Files (x86)\Microsoft Visual Studio"
 
-cd %USRLOCAL%
-bash
-WKIT_S=$(echo "$WKIT" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
-MSVC_ROOT_S=$(echo "$MSVC_ROOT" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
-USRLOCAL_S=$(echo "$USRLOCAL" | sed "s/\\\/\//g" | sed -r "s/(.):/\/\1/g")
+echo インストールしたパスがあっていれば次へ進む。
+echo もしもインストール先を変更したなら変数WKIT_ROOT、MSVC_ROOTのパスを正してください
 
-%IDEROOT%\usr\bin\find "%WKIT%" "%MSVC_ROOT%" -type d -regex ".*[lL]ib.*[xd]64$" -printf ";%p" | cut -b 2- | sed "s;/;\\\;g"
-%IDEROOT%\usr\bin\find "%WKIT%" "%MSVC_ROOT%" -type d -name "[iI]nclude" -printf ";%p" | cut -b 2- | sed "s;/;\\\;g"
+```
 
-mkdir include lib
+##### INCLUDE, LIBRARYPATHの環境変数作成
+```powershell
+set PROCESSOR_ARCH=
+set IDEROOT_S=
+set WKIT_S=
+set WKIT_LATEST_VERSION=
+set MSVC_ROOT_S=
+for /f %a in ('bash -c "echo ${PROCESSOR_ARCHITECTURE,,}"') do set PROCESSOR_ARCH=%a
+for /f %a in ('echo %IDEROOT% ^| sed "s/\\\/\//g"') do set IDEROOT_S=%a
+for /f %a in ('ls "%WKIT_ROOT%/Lib" ^| tail -1') do set WKIT_LATEST_VERSION=%a
+for /f %a in ('echo %WKIT_ROOT%\%WKIT_LATEST_VERSION% ^| sed "s/\\\/\//g"') do set WKIT_S=%a
+for /f %a in ('echo %MSVC_ROOT% ^| sed "s/\\\/\//g"') do set MSVC_ROOT_S=%a
 
-cp -R "$WKIT_S"/include/*/* include/
-cp -R "$WKIT_S"/Lib/*/*/x64/* lib/
-cp -R "$MSVC_ROOT_S"/BuildTools/VC/Auxiliary .
-cp -R "$MSVC_ROOT_S"/BuildTools/VC/Redist .
-cp -R "$MSVC_ROOT_S"/BuildTools/VC/Tools/MSVC/*/lib/x64/* lib/
-cp -R "$MSVC_ROOT_S"/BuildTools/VC/Tools/MSVC/*/include/* include/
-cp -R "$MSVC_ROOT_S"/BuildTools/VC/Tools/MSVC/*/crt .
-cp -R "$MSVC_ROOT_S"/BuildTools/VC/Tools/MSVC/*/bin/Hostx64/x64 bin
-exit
+set WKIT_LATEST_REVISION=
+set VS_LATEST_VERSION=
+set MSVC_LATEST_VERSION=
+set CLANG_VERSION=
+for /f %a in ('ls "%WKIT_S%/Lib" ^| tail -1') do set WKIT_LATEST_REVISION=%a
+for /f %a in ('ls "%WKIT_ROOT%" ^| tail -1') do set VS_LATEST_VERSION=%a
+for /f %a in ('ls "%MSVC_ROOT%\VC\Tools\MSVC" ^| tail -1') do set MSVC_LATEST_VERSION=%a
+for /f %a in ('ls "%IDEROOT%/lib/clang" ^| tail -1') do set CLANG_VERSION=%a
+
+set MSBUILD_ROOT_S "%MSVC_ROOT_S%/%VS_LATEST_VERSION%/BuildTools"
+set MSBUILD_S "%MSVC_ROOT_S%/VC/Tools/MSVC/%MSVC_LATEST_VERSION%"
+
+set WKIT_LIBPATH_S=%WKIT_S%/Lib/%WKIT_LATEST_REVISION%
+set WKIT_INCLUDE_S=%WKIT_S%/Lib/%WKIT_LATEST_REVISION%
+
+set LIBPATH_S=%IDEROOT_S%/usr/local/lib
+set LIBPATH_S=%LIBPATH_S%;%PYTHONPATH%/libs
+set LIBPATH_S=%LIBPATH_S%;%WKIT_LIBPATH_S%/ucrt/%ARCH%
+set LIBPATH_S=%LIBPATH_S%;%WKIT_LIBPATH_S%/ucrt_enclave/%ARCH%
+set LIBPATH_S=%LIBPATH_S%;%WKIT_LIBPATH_S%/um/%ARCH%
+set LIBPATH_S=%LIBPATH_S%;%MSBUILD_ROOT_S%/DIA SDK/lib/%PROCESSOR_ARCH%
+set LIBPATH_S=%LIBPATH_S%;%MSBUILD_S%/lib/%ARCH%
+set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/lib/clang/%CLANG_VERSION%/lib
+set LIBPATH_S=%LIBPATH_S%;%PYENV%/libexec/libs
+set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/usr/lib
+set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/lib
+
+set INCLUDE_S=%IDEROOT_S%/usr/local/include
+set INCLUDE_S=%INCLUDE_S%;%PYTHONPATH%/include
+set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/cppwinrt
+set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/shared
+set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/ucrt
+set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/um
+set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/winrt
+set INCLUDE_S=%INCLUDE_S%;%MSBUILD_ROOT_S%/DIA SDK/include
+set INCLUDE_S=%INCLUDE_S%;%MSBUILD_ROOT_S%/VC/Auxiliary/VS/include
+set INCLUDE_S=%INCLUDE_S%;%MSBUILD_S%/include
+set INCLUDE_S=%INCLUDE_S%;%IDEROOT_S%/usr/local/poetry/venv/Include
+set INCLUDE_S=%INCLUDE_S%;%IDEROOT_S%/lib/clang/%CLANG_VERSION%/include
+set INCLUDE_S=%INCLUDE_S%;%IDEROOT_S%/include
 
 
-echo @call ^"^%MSVC_ROOT^%\BuildTools\Common7\Tools\VsDevCmd.bat^" %* > %IDEROOT%\bin\vsdevcmd.bat
-echo @call ^"^%MSVC_ROOT^%\BuildTools\VC\Auxiliary\Build\vcvarsall.bat^" %* > %IDEROOT%\bin\vcvarsall.bat
-echo @call ^"^%MSVC_ROOT^%\BuildTools\VC\Auxiliary\Build\vcvarsall.bat^" x64 %* > %IDEROOT%\bin\vcvars64.bat
-echo @call ^"^%MSVC_ROOT^%\BuildTools\VC\Auxiliary\Build\vcvarsall.bat^" x86 %* > %IDEROOT%\bin\vcvars32.bat
+setx INCLUDE %INCLUDE_S%
+setx LIBPATH %LIBPATH_S%
+
+echo @call ^"^%MSBUILD_ROOT^%\Common7\Tools\VsDevCmd.bat^" %* > %IDEROOT%\bin\vsdevcmd.bat
+echo @call ^"^%MSBUILD_ROOT^%\VC\Auxiliary\Build\vcvarsall.bat^" %* > %IDEROOT%\bin\vcvarsall.bat
+echo @call ^"^%MSBUILD_ROOT^%\VC\Auxiliary\Build\vcvarsall.bat^" x64 %* > %IDEROOT%\bin\vcvars64.bat
+echo @call ^"^%MSBUILD_ROOT^%\VC\Auxiliary\Build\vcvarsall.bat^" x86 %* > %IDEROOT%\bin\vcvars32.bat
 
 ```
 
