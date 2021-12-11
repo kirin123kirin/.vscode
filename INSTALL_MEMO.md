@@ -209,19 +209,19 @@ set WKIT_LIBPATH_S=%WKIT_S%/Lib/%WKIT_LATEST_REVISION%
 set WKIT_INCLUDE_S=%WKIT_S%/Lib/%WKIT_LATEST_REVISION%
 
 set LIBPATH_S=%IDEROOT_S%/usr/local/lib
-set LIBPATH_S=%LIBPATH_S%;%PYTHONPATH%/libs
+set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/usr/local/pyenv/pyenv-win/versions/%PYTHONVERSION%/libs
 set LIBPATH_S=%LIBPATH_S%;%WKIT_LIBPATH_S%/ucrt/%ARCH%
 set LIBPATH_S=%LIBPATH_S%;%WKIT_LIBPATH_S%/ucrt_enclave/%ARCH%
 set LIBPATH_S=%LIBPATH_S%;%WKIT_LIBPATH_S%/um/%ARCH%
 set LIBPATH_S=%LIBPATH_S%;%MSBUILD_ROOT_S%/DIA SDK/lib/%PROCESSOR_ARCH%
 set LIBPATH_S=%LIBPATH_S%;%MSBUILD_S%/lib/%ARCH%
 set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/lib/clang/%CLANG_VERSION%/lib
-set LIBPATH_S=%LIBPATH_S%;%PYENV%/libexec/libs
+set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/usr/local/pyenv/pyenv-win/libexec/libs
 set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/usr/lib
 set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/lib
 
 set INCLUDE_S=%IDEROOT_S%/usr/local/include
-set INCLUDE_S=%INCLUDE_S%;%PYTHONPATH%/include
+set INCLUDE_S=%INCLUDE_S%;%IDEROOT_S%/usr/local/pyenv/pyenv-win/versions/%PYTHONVERSION%/include
 set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/cppwinrt
 set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/shared
 set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/ucrt
@@ -327,3 +327,5 @@ notepad ~/.pypirc
 exit
 
 ```
+
+以上、
