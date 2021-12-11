@@ -15,7 +15,7 @@
 
 2021/12/10 時点での最新版を例に以下の手順を示す
 
-## 環境変数設定
+## 1. 環境変数設定
 
 ```powershell
 setx IDEROOT C:\ide
@@ -36,16 +36,15 @@ exit
 ```
 * PYTHONVERSIONは pyenvで指定可能なバージョン
 
-## とりあえず入れるもの
+## 2. とりあえず入れるもの
+デフォルト設定でインストール
 ### [7zip](https://sevenzip.osdn.jp/download.html) は必須
 インストーラー -> [v21.06 直リンク](https://www.7-zip.org/a/7z2106-x64.exe)
 ### エディタはなんでもよいが、[サクラエディタ](https://github.com/sakura-editor/sakura/releases)
 インストーラー -> [v2.4.1 直リンク](https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Installer.zip)
 
-適当にインストール
-
 ## [Git for Windows](https://github.com/git-for-windows/git/releases)
-現時点での最新版のこれを使う
+現時点での最新版をインストール
 
 ```powershell
 powershell wget https://github.com/git-for-windows/git/releases/download/v2.34.1.windows.1/Git-2.34.1-64-bit.tar.bz2 -OutFile %TEMP%\git-for-windows.tar.bz2
@@ -54,13 +53,12 @@ echo %IDEROOT%にインストールしてます
 del /s /q %TEMP%\git-for-windows.tar.bz2
 
 ```
-
 * このエラーは出てもよい
   * 「ERROR: Cannot create symbolic link : クライアントは要求された特権を保有していません。 : fd, stderr, stdin, stdout, mtab」
 
-## 開発環境
-## Python(pyenv運用)
-#### [python](https://www.python.org/ftp/python/)
+## 3. 開発環境作成
+### (1) Python(pyenv運用)
+#### [python仮の本体](https://www.python.org/ftp/python/)
  pyenv インストールまでの一時的な環境なのでembedを使う。
  pyenvインストール後はすぐ消してしまうので
 
@@ -71,7 +69,8 @@ set Path=%TEMP%\pytmp;%Path%
 
 ```
 
-#### [pyenv](https://github.com/pyenv/pyenv.git)
+### (2) [pyenv](https://github.com/pyenv/pyenv.git)
+%PYTHONVERSION%を真のpython本体にします
 
 ```powershell
 curl -L https://bootstrap.pypa.io/get-pip.py | python - install pyenv-win --target %PYENV_ROOT%
@@ -86,7 +85,7 @@ echo "python %PYTHONVERSION% の他に必要なバージョンがあればここ
 
 ```
 
-#### pyenvの初期設定
+### (3) pyenvの初期設定
 
 ```powershell
 
@@ -120,7 +119,7 @@ mv %LOCALAPPDATA%\Microsoft\WindowsApps\python3.exe %LOCALAPPDATA%\Microsoft\Win
 * dev_d.msiをダウンロードしている理由 -> python39_d.libが欲しいため
 
 
-#### [poetry](https://github.com/python-poetry/poetry)
+### (4) [poetry](https://github.com/python-poetry/poetry)
 ```powershell
 curl -L https://install.python-poetry.org | python -
 poetry --version
@@ -131,7 +130,7 @@ poetry config cache-dir "%POETRY_HOME%\pypoetry\Cache"
 
 ```
 
-### C/C++ Build Tool
+### (5) C/C++ Build Tool
 #### [LLVM](https://github.com/llvm/llvm-project/releases) & [CMake](https://cmake.org/download/) & [Ninja](https://github.com/ninja-build/ninja/releases)
 
 ```powershell
@@ -155,7 +154,7 @@ del /s /q %TEMP%\ninja.zip
 
 ```
 
-### C/C++ Windows headers & libraries
+### (6) C/C++ Windows headers & libraries
 #### [Microsoft BuildTools](https://visualstudio.microsoft.com/ja/visual-cpp-build-tools/)
 インストーラ → [VSBuildTools(2022) 直リンク](https://aka.ms/vs/17/release/vs_BuildTools.exe)
 
@@ -163,7 +162,9 @@ del /s /q %TEMP%\ninja.zip
  * MSVC x64 ビルド ツール 最新
  * Windows 10 SDK
 
-##### 以下は癖の強い変数操作とWindowsパスを弄る関数群
+---
+以下は別にやらなくてよくて、(7)まで飛んでOK
+##### 癖の強い変数操作とWindowsパスを弄る関数群
 
 ```bash
 bash
@@ -291,7 +292,7 @@ echo @call ^"^%MSBUILD_ROOT^%\VC\Auxiliary\Build\vcvarsall.bat^" x86 %* > %IDERO
 
 ```
 
-#### [VSCode](https://code.visualstudio.com/)
+### (7) [VSCode](https://code.visualstudio.com/)
 
 ```powershell
 echo VSCodeインストールしてます
@@ -326,7 +327,7 @@ mshta vbscript:execute("MsgBox(""ステータスバーのダウンロードが�
 
 ```
 
-### Git config global & PyPI config
+### (8) Git config global & PyPI config
 ユーザ名とEmailを入力してください。
 
 ```bash
