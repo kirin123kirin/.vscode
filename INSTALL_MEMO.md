@@ -11,12 +11,13 @@
 * C/C++ header & library : 最低限のWindows10 SDK & MSVC Build
 * python : pyenv & poetry
 * SCM : Git for Windows
-* etc : 7zip, sakura editor
+* etc : nodejs, 7zip, sakura editor
 
 2021/12/10 時点での最新版を例に以下の手順を示す
 
 ## 1. 環境変数設定
 
+### (1) ユーザ環境変数等
 ```powershell
 setx IDEROOT C:\ide
 setx VSCODE_HOME %IDEROOT%\VSCode
@@ -26,10 +27,13 @@ setx PYENV %PYENV_ROOT%\pyenv-win
 setx PYTHONVERSION 3.9.6
 setx PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
 setx POETRY_HOME %USRLOCAL%\poetry
+setx NODEJS_HOME %USRLOCAL%\nodejs
+exit
+```
 
-set Path_="%Path%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura"
-set Path_="%Path_%;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin"
-setx Path "%Path_%;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin"
+### (2) Path追加
+```
+setx Path "%Path%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%Path_%;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%";%APPDATA%\npm
 
 exit
 
@@ -162,9 +166,105 @@ del /s /q %TEMP%\ninja.zip
  * MSVC x64 ビルド ツール 最新
  * Windows 10 SDK
 
+### (7) [VSCode](https://code.visualstudio.com/)
+
+```powershell
+echo VSCodeインストールしてます
+curl -L -o "%TEMP%\download_vscode.zip" "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive"
+7z x -aoa -o"%VSCODE_HOME%" "%TEMP%\download_vscode.zip"
+del /s /q "%TEMP%\download_vscode.zip"
+
+echo ショートカットを作成してます
+set TARGET='%VSCODE_HOME%\Code.exe'
+set SHORTCUT='%APPDATA%\Microsoft\Windows\Start Menu\Code.lnk'
+powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.Save()"
+cp %SHORTCUT% %USERPROFILE%\Desktop
+
+```
+
+### (8) [Node.js](https://nodejs.org/ja/)
+インストーラ -> [v17.2.0 直リンク](https://nodejs.org/dist/v17.2.0/node-v17.2.0-x64.msi)
+
+
+```
+curl -L -o %TEMP%\node.zip https://nodejs.org/dist/v16.13.1/node-v16.13.1-win-x64.zip
+7z x -o%TEMP% %TEMP%\node.zip
+mv "%TEMP%"/node-v* "%NODEJS_HOME%"
+rm -rf %TEMP%/node.zip %TEMP%/node-v*
+```
+
+## 4. 個人的な初期設定
+### (1) VSCode
+
+```powershell
+echo 拡張機能をインストールします
+curl -L -o %TEMP%\vscode_extensions.txt https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt
+for /f %n in (%TEMP%\vscode_extensions.txt) do (code --install-extension %n)
+del /s /q %TEMP%\vscode_extensions.txt
+
+echo 全般設定の設定中
+curl -L -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/settings.json
+
+echo キーバインドの設定中
+curl -L -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
+
+code
+mshta vbscript:execute("MsgBox(""ステータスバーのダウンロードが完了するまで待ってVSCodeを再起動してください""):close")
+
+```
+
+### (2) Git config global & PyPI config
+ユーザ名とEmailを入力してください。
+
+```bash
+echo git configとpypircの設定を行います。
+
+bash
+
+cat<<EOF > ~/.gitconfig
+[user]
+	       email = 
+	       name = 
+[filter "lfs"]
+	       clean = git-lfs clean -- %f
+	       smudge = git-lfs smudge -- %f
+	       process = git-lfs filter-process
+	       required = true
+[gui]
+	       encoding = utf-8
+[core]
+        autocrlf = input
+EOF
+
+notepad ~/.gitconfig
+
+cat<<EOF > ~/.pypirc
+[distutils]
+index-servers=
+    pypi
+    pypitest
+
+[pypi]
+username: 
+password: 
+
+#[pypitest]
+#repository: https://test.pypi.org/legacy/
+#username : 
+#password : 
+
+EOF
+
+notepad ~/.pypirc
+
+exit
+
+```
+
 ---
-以下は別にやらなくてよくて、(7)まで飛んでOK
-##### 癖の強い変数操作とWindowsパスを弄る関数群
+以下は別にやらなくても良い。
+### INCLUDE, LIBPATHの環境変数を作る
+Visual Studioのパスが死ぬほどめんどくさい
 
 ```bash
 bash
@@ -229,11 +329,8 @@ EOF
 unix2dos $IDEROOT/cmd/path_toslash.cmd
 
 exit
-```
 
-##### 以下はINCLUDE, LIBPATHの環境変数を作りたいだけです
 
-```powershell
 set ARCH=x64
 regvalue WKIT "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed Roots" "KitsRoot10"
 regvalue MSVC_ROOT "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\Setup" "SharedInstallationPath"
@@ -291,88 +388,4 @@ echo @call ^"^%MSBUILD_ROOT^%\VC\Auxiliary\Build\vcvarsall.bat^" x64 %* > %IDERO
 echo @call ^"^%MSBUILD_ROOT^%\VC\Auxiliary\Build\vcvarsall.bat^" x86 %* > %IDEROOT%\bin\vcvars32.bat
 
 ```
-
-### (7) [VSCode](https://code.visualstudio.com/)
-
-```powershell
-echo VSCodeインストールしてます
-curl -L -o "%TEMP%\download_vscode.zip" "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive"
-7z x -aoa -o"%VSCODE_HOME%" "%TEMP%\download_vscode.zip"
-del /s /q "%TEMP%\download_vscode.zip"
-
-echo ショートカットを作成してます
-set TARGET='%VSCODE_HOME%\Code.exe'
-set SHORTCUT='%APPDATA%\Microsoft\Windows\Start Menu\Code.lnk'
-powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.Save()"
-cp %SHORTCUT% %USERPROFILE%\Desktop
-
-```
-
-##### VSCode 個人的な初期設定一括
-
-```powershell
-echo 拡張機能をインストールします
-curl -L -o %TEMP%\vscode_extensions.txt https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt
-for /f %n in (%TEMP%\vscode_extensions.txt) do (code --install-extension %n)
-del /s /q %TEMP%\vscode_extensions.txt
-
-echo 全般設定の設定中
-curl -L -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/settings.json
-
-echo キーバインドの設定中
-curl -L -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
-
-code
-mshta vbscript:execute("MsgBox(""ステータスバーのダウンロードが完了するまで待ってVSCodeを再起動してください""):close")
-
-```
-
-### (8) Git config global & PyPI config
-ユーザ名とEmailを入力してください。
-
-```bash
-echo git configとpypircの設定を行います。
-
-bash
-
-cat<<EOF > ~/.gitconfig
-[user]
-	       email = 
-	       name = 
-[filter "lfs"]
-	       clean = git-lfs clean -- %f
-	       smudge = git-lfs smudge -- %f
-	       process = git-lfs filter-process
-	       required = true
-[gui]
-	       encoding = utf-8
-[core]
-        autocrlf = input
-EOF
-
-notepad ~/.gitconfig
-
-cat<<EOF > ~/.pypirc
-[distutils]
-index-servers=
-    pypi
-    pypitest
-
-[pypi]
-username: 
-password: 
-
-#[pypitest]
-#repository: https://test.pypi.org/legacy/
-#username : 
-#password : 
-
-EOF
-
-notepad ~/.pypirc
-
-exit
-
-```
-
 以上、
