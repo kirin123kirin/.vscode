@@ -163,37 +163,90 @@ del /s /q %TEMP%\ninja.zip
  * MSVC x64 ビルド ツール 最新
  * Windows 10 SDK
 
-```powershell
-set ARCH=x64
-set WKIT_ROOT "C:\Program Files (x86)\Windows Kits"
-set MSVC_ROOT "C:\Program Files (x86)\Microsoft Visual Studio"
+##### 以下は癖の強い変数操作とWindowsパスを弄る関数群
 
-echo インストールしたパスがあっていれば次へ進む。
-echo もしもインストール先を変更したなら変数WKIT_ROOT、MSVC_ROOTのパスを正してください
+```bash
+bash
 
+cat <<EOF > $IDEROOT/cmd/evalvar.cmd
+@echo off
+set argc=0
+for %%a in ( %* ) do set /a argc+=1
+
+if %argc% lss 2 (
+  echo This is a command to save the result of execution to a variable
+  echo Usage: regval.cmd ^<return variable^> ^<run command^>
+  set argc=
+  exit /b 1
+)
+
+set argc=
+
+for /f "tokens=*" %%a in ('%~2 ^| tr -d "\r" ^| tr "\n" " "') do set %1=%%a
+
+EOF
+unix2dos $IDEROOT/cmd/evalvar.cmd
+
+
+cat <<EOF > $IDEROOT/cmd/regvalue.cmd
+@echo off
+set argc=0
+for %%a in ( %* ) do set /a argc+=1
+
+if %argc% neq 3 (
+  echo This is the command to get the value of a registry key
+  echo Usage: regval.cmd ^<return variable^> ^<registry key path^> ^<key name^>
+  set argc=
+  exit /b 1
+)
+
+set argc=
+
+for /f "tokens=1,2,*" %%a in ('REG QUERY %2 /v %3') DO if not %%c=="" set %1=%%c
+
+EOF
+unix2dos $IDEROOT/cmd/regvalue.cmd
+
+
+cat <<EOF > $IDEROOT/cmd/path_toslash.cmd
+@echo off
+set argc=0
+for %%a in ( %* ) do set /a argc+=1
+
+if %argc% neq 2 (
+  echo This is a command to convert a Windows backslash path to a slash.
+  echo Usage: regval.cmd ^<return variable^> ^<Windows Path of backslash^>
+  set argc=
+  exit /b 1
+)
+
+set argc=
+
+for /f "tokens=*" %%a in ('echo %2 ^| sed "s/\\\\\\/\\//g"') do set %1=%%a
+
+EOF
+unix2dos $IDEROOT/cmd/path_toslash.cmd
+
+exit
 ```
 
-##### INCLUDE, LIBRARYPATHの環境変数作成
-```powershell
-set PROCESSOR_ARCH=
-set IDEROOT_S=
-set WKIT_S=
-set WKIT_LATEST_VERSION=
-set MSVC_ROOT_S=
-for /f %a in ('bash -c "echo ${PROCESSOR_ARCHITECTURE,,}"') do set PROCESSOR_ARCH=%a
-for /f %a in ('echo %IDEROOT% ^| sed "s/\\\/\//g"') do set IDEROOT_S=%a
-for /f %a in ('ls "%WKIT_ROOT%/Lib" ^| tail -1') do set WKIT_LATEST_VERSION=%a
-for /f %a in ('echo %WKIT_ROOT%\%WKIT_LATEST_VERSION% ^| sed "s/\\\/\//g"') do set WKIT_S=%a
-for /f %a in ('echo %MSVC_ROOT% ^| sed "s/\\\/\//g"') do set MSVC_ROOT_S=%a
+##### 以下はINCLUDE, LIBPATHの環境変数を作りたいだけです
 
-set WKIT_LATEST_REVISION=
-set VS_LATEST_VERSION=
-set MSVC_LATEST_VERSION=
-set CLANG_VERSION=
-for /f %a in ('ls "%WKIT_S%/Lib" ^| tail -1') do set WKIT_LATEST_REVISION=%a
-for /f %a in ('ls "%WKIT_ROOT%" ^| tail -1') do set VS_LATEST_VERSION=%a
-for /f %a in ('ls "%MSVC_ROOT%\VC\Tools\MSVC" ^| tail -1') do set MSVC_LATEST_VERSION=%a
-for /f %a in ('ls "%IDEROOT%/lib/clang" ^| tail -1') do set CLANG_VERSION=%a
+```powershell
+set ARCH=x64
+regvalue WKIT "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed Roots" "KitsRoot10"
+regvalue MSVC_ROOT "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\Setup" "SharedInstallationPath"
+set MSVC_ROOT=%MSVC_ROOT:\Shared=%
+
+evalvar PROCESSOR_ARCH "echo %PROCESSOR_ARCHITECTURE% ^| tr '[A-Z]' '[a-z]'"
+path_toslash(IDEROOT_S)
+path_toslash(WKIT_S)
+path_toslash(MSVC_ROOT_S)
+
+evalvar WKIT_LATEST_REVISION "ls ""%WKIT_S%/Lib"" ^| tail -1"
+evalvar VS_LATEST_VERSION "ls ""%MSVC_ROOT%"" ^| tail -1"
+evalvar MSVC_LATEST_VERSION "ls ""%MSVC_ROOT%\VC\Tools\MSVC"" ^| tail -1"
+evalvar CLANG_VERSION "ls ""%IDEROOT%/lib/clang"" ^| tail -1"
 
 set MSBUILD_ROOT_S "%MSVC_ROOT_S%/%VS_LATEST_VERSION%/BuildTools"
 set MSBUILD_S "%MSVC_ROOT_S%/VC/Tools/MSVC/%MSVC_LATEST_VERSION%"
