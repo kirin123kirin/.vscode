@@ -46,11 +46,9 @@ exit
 ## 2. とりあえず入れるもの
 デフォルト設定でインストール
 ### (1) [7zip](https://sevenzip.osdn.jp/download.html)
-これ必須
-インストーラー -> [v21.06 直リンク](https://www.7-zip.org/a/7z2106-x64.exe)
+これ必須 -> [v21.06 直リンク](https://www.7-zip.org/a/7z2106-x64.exe)
 ### (2) [サクラエディタ](https://github.com/sakura-editor/sakura/releases)
-なんでもよいけど
-インストーラー -> [v2.4.1 直リンク](https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Installer.zip)
+なんでもよいけど -> [v2.4.1 直リンク](https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Installer.zip)
 
 ### (3) [Git for Windows](https://github.com/git-for-windows/git/releases)
 最新版をインストール
@@ -68,8 +66,61 @@ del /s /q %TEMP%\git-for-windows.tar.bz2 %TEMP%\wget.zip
 * このエラーは気にしない
   * 「ERROR: Cannot create symbolic link : クライアントは要求された特権を保有していません。 : fd, stderr, stdin, stdout, mtab」
 
-## 3. 開発環境作成
-### (1) [Python(pyenv-win)](https://github.com/pyenv-win/pyenv-win)
+## 3. 個人的に外せない開発環境
+### (0) 下準備
+
+以下コマンドラインでやってること
+1. ダウンロード＆解凍用コマンドの作成(この後ダウンロードしまくるので)
+2. [fzf](https://github.com/junegunn/fzf#windows)をインストール
+3. [RipGrep](https://github.com/BurntSushi/ripgrep)をインストール
+4. [RipGrep-all](https://github.com/phiresky/ripgrep-all)をインストール
+
+```
+bash
+cat <<EOF > $IDEROOT/cmd/dunzip.cmd
+@echo off
+set argc=0
+for %%a in ( %* ) do set /a argc+=1
+
+if %argc% lss 2 (
+  echo This is download and extract
+  echo Usage: dunzip.cmd ^<extract target directory^> ^<download URL^> ^<extract wildcard rule^>
+  set argc=
+  exit /b 1
+)
+
+set TMPNAME="%TEMP%"/workdir_download_will_unzip
+
+rm -rf %TMPNAME%*
+curl -L -o %TMPNAME%.zip %2
+
+7z x -o%TMPNAME% %TMPNAME%.zip
+
+if not exist %1 (mkdir %1)
+
+if "%3"=="" (
+  mv %TMPNAME%/* %TMPNAME%/.* %1
+) else (
+  mv %TMPNAME%/%3 %1
+)
+
+rm -rf %TMPNAME%*
+
+EOF
+unix2dos $IDEROOT/cmd/dunzip.cmd
+
+exit
+
+
+dunzip %IDEROOT%/usr/bin https://github.com/junegunn/fzf/releases/download/0.28.0/fzf-0.28.0-windows_amd64.zip
+
+dunzip %IDEROOT%/usr/bin https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep-13.0.0-x86_64-pc-windows-msvc.zip ripgrep-*/rg.exe
+
+dunzip %IDEROOT%/usr/bin https://github.com/phiresky/ripgrep-all/releases/download/v0.9.6/ripgrep_all-v0.9.6-x86_64-pc-windows-msvc.zip ripgrep*/rga*.exe
+
+```
+
+### (2) [Python(pyenv-win)](https://github.com/pyenv-win/pyenv-win)
 
 ```powershell
 git clone https://github.com/pyenv-win/pyenv-win.git "%PYENV_ROOT%"
@@ -89,7 +140,7 @@ echo python %PYTHONVERSION% の他に必要なバージョンがあれば、こ�
 
 ```
 
-### (2) Python(pyenv-win) 初期設定
+### (3) Python(pyenv-win) 初期設定
 やってること
 
 1. python関連 SJIS固有の不具合の強引な対策
@@ -151,6 +202,8 @@ poetry config cache-dir "%POETRY_HOME%\pypoetry\Cache"
 
 ```powershell
 echo LLVM インストール...
+dunzip %IDEROOT% https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/LLVM-13.0.0-win64.exe
+
 curl -L -o %TEMP%\llvm.zip https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/LLVM-13.0.0-win64.exe
 7z x -o%IDEROOT% %TEMP%\llvm.zip
 del %TEMP%\llvm.zip
