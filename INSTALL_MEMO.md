@@ -71,11 +71,7 @@ del /s /q %TEMP%\git-for-windows.tar.bz2 %TEMP%\wget.zip
 ## 3. 個人的に外せない開発環境
 ### (0) 下準備
 
-以下コマンドラインでやってること
 1. ダウンロード＆解凍用コマンドの作成(この後ダウンロードしまくるので)
-2. [fzf](https://github.com/junegunn/fzf#windows)をインストール
-3. [RipGrep](https://github.com/BurntSushi/ripgrep)をインストール
-4. [RipGrep-all](https://github.com/phiresky/ripgrep-all)をインストール
 
 ```
 bash
@@ -101,9 +97,9 @@ curl -L -o %TMPNAME%.zip %2
 if not exist %1 (mkdir %1)
 
 if "%3"=="" (
-  mv %TMPNAME%/* %TMPNAME%/.* %1
+  mv -f %TMPNAME%/* %TMPNAME%/.* %1 2>&1 | grep -v "/.. to a subdirectory of itself" | grep -v ""
 ) else (
-  mv %TMPNAME%/%3 %1
+  mv -f %TMPNAME%/%3 %1
 )
 
 rm -rf %TMPNAME%*
@@ -113,12 +109,22 @@ unix2dos $IDEROOT/cmd/dunzip.cmd
 
 exit
 
+```
+
+2. [fzf](https://github.com/junegunn/fzf#windows)をインストール
+3. [RipGrep](https://github.com/BurntSushi/ripgrep)をインストール
+4. [RipGrep-all](https://github.com/phiresky/ripgrep-all)をインストール
+5. [GNU版 grepに変更](http://gnuwin32.sourceforge.net/packages/grep.htm)をインストール
+
+```
 
 dunzip %IDEROOT%/usr/bin https://github.com/junegunn/fzf/releases/download/0.28.0/fzf-0.28.0-windows_amd64.zip
 
 dunzip %IDEROOT%/usr/bin https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep-13.0.0-x86_64-pc-windows-msvc.zip ripgrep-*/rg.exe
 
 dunzip %IDEROOT%/usr/bin https://github.com/phiresky/ripgrep-all/releases/download/v0.9.6/ripgrep_all-v0.9.6-x86_64-pc-windows-msvc.zip ripgrep*/rga*.exe
+
+dunzip %IDEROOT%/usr/bin http://downloads.sourceforge.net/gnuwin32/grep-2.5.4-bin.zip
 
 ```
 
@@ -267,9 +273,7 @@ rm -rf %TEMP%/node.zip %TEMP%/node-v*
 
 ```powershell
 echo 拡張機能をインストールします
-curl -L -o %TEMP%\vscode_extensions.txt https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt
-for /f %n in (%TEMP%\vscode_extensions.txt) do (code --install-extension %n)
-del /s /q %TEMP%\vscode_extensions.txt
+bash -c 'curl -sSL https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt | xargs -L1 code --install-extension'
 
 echo 全般設定の設定中
 curl -L -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/settings.json
