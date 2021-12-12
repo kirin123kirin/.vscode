@@ -42,13 +42,15 @@ exit
 
 ## 2. とりあえず入れるもの
 デフォルト設定でインストール
-### [7zip](https://sevenzip.osdn.jp/download.html) は必須
+### (1) [7zip](https://sevenzip.osdn.jp/download.html)
+これ必須
 インストーラー -> [v21.06 直リンク](https://www.7-zip.org/a/7z2106-x64.exe)
-### エディタはなんでもよいが、[サクラエディタ](https://github.com/sakura-editor/sakura/releases)
+### (2) [サクラエディタ](https://github.com/sakura-editor/sakura/releases)
+なんでもよいけど
 インストーラー -> [v2.4.1 直リンク](https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Installer.zip)
 
-## [Git for Windows](https://github.com/git-for-windows/git/releases)
-現時点での最新版をインストール
+### [Git for Windows](https://github.com/git-for-windows/git/releases)
+最新版をインストール
 
 ```powershell
 mkdir %IDEROOT%\usr\bin
