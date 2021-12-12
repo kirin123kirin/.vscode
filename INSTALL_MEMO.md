@@ -32,8 +32,11 @@ exit
 ```
 
 ### (2) Path追加
+[ローカル変数"GOMI"とは？](https://zenn.dev/ef/articles/fede252753800b12f42b)
 ```
-setx Path "%Path%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%Path_%;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%";%APPDATA%\npm
+set GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
+
+setx Path "%Path:%GOMI%;=%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%";%APPDATA%\npm;%GOMI%
 
 exit
 
@@ -49,7 +52,7 @@ exit
 なんでもよいけど
 インストーラー -> [v2.4.1 直リンク](https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Installer.zip)
 
-### [Git for Windows](https://github.com/git-for-windows/git/releases)
+### (3) [Git for Windows](https://github.com/git-for-windows/git/releases)
 最新版をインストール
 
 ```powershell
@@ -62,56 +65,62 @@ echo %IDEROOT%にインストールしてます
 del /s /q %TEMP%\git-for-windows.tar.bz2 %TEMP%\wget.zip
 
 ```
-* このエラーは出てもよい
+* このエラーは気にしない
   * 「ERROR: Cannot create symbolic link : クライアントは要求された特権を保有していません。 : fd, stderr, stdin, stdout, mtab」
 
 ## 3. 開発環境作成
-### (1) Python(pyenv運用)
-#### [python仮の本体](https://www.python.org/ftp/python/)
- pyenv インストールまでの一時的な環境なのでembedを使う。
- pyenvインストール後はすぐ消してしまうので
+### (1) [Python(pyenv-win)](https://github.com/pyenv-win/pyenv-win)
 
 ```powershell
-curl -L -o %TEMP%\py.zip https://www.python.org/ftp/python/3.9.9/python-3.9.9-embed-amd64.zip
-7z x -o%TEMP%\pytmp %TEMP%\py.zip
-set Path=%TEMP%\pytmp;%Path%
-
-```
-
-### (2) [pyenv](https://github.com/pyenv/pyenv.git)
-%PYTHONVERSION%を真のpython本体にします
-
-```powershell
-curl -L https://bootstrap.pypa.io/get-pip.py | python - install pyenv-win --target %PYENV_ROOT%
-cd %PYENV_ROOT%
-rm -rf bin *distutil* install* pip* pkg_resources setuptools* wheel*
-rd /s /q %TEMP%\pytmp
-del %TEMP%\py.zip
+git clone https://github.com/pyenv-win/pyenv-win.git "%PYENV_ROOT%"
+cd "%PYENV_ROOT%"
+mv .version pyenv-win
+rm -rf [._a-oq-zR]*
+mv pyenv-win/.version ./
+pyenv --version
+pyenv rehash
 
 pyenv install %PYTHONVERSION%
+pyenv global %PYTHONVERSION%
+pyenv update
+pyenv install -l | grep -v "win"
 
-echo "python %PYTHONVERSION% の他に必要なバージョンがあればここで入れてください。
+echo python %PYTHONVERSION% の他に必要なバージョンがあれば、ここで入れてください。上に出ているバージョン一覧参照
 
 ```
 
-### (3) pyenvの初期設定
+### (2) Python(pyenv-win) 初期設定
+やってること
+
+1. python関連 SJIS固有の不具合の強引な対策
+  * [pyenv Issue51対処](https://github.com/pyenv-win/pyenv-win/issues/51)
+  * [python zipファイル名日本語文字化け対策](https://oku.edu.mie-u.ac.jp/~okumura/python/encoding.html)
+
+2. ライブラリインストール
+  * pip最新化
+  * 開発用ライブラリのインストール
+  * CAPI開発用にpythonXX_d.libのインストール
 
 ```powershell
 
-pyenv global %PYTHONVERSION%
-pyenv --version
-pyenv update
-pyenv install -l
-
+echo pyenv Issue51関連の不具合修正してます
 grep -rl "chcp 1250" * | xargs sed -i "s/chcp 1250/chcp 932/g"
-echo sedする理由は https://github.com/pyenv-win/pyenv-win/issues/51
-
 pyenv rehash
 
 cd %PYENV%\versions
+
 for /d %d in (*) do (
+  pyenv local %d
+  
+  echo zipfile 文字化け不具合の修正をしてます
+  sed -i.bak "s/cp437/cp932/g" %PYENV%\versions\%d\Lib\zipfile.py
+  
+  echo pipを最新化します
   python -m pip install --upgrade pip
-  pip install setuptools wheel autopep8 flake8 pytest
+  
+  echo 開発用ツールをインストールしてます
+  pip install autopep8 scikit-build
+  pip install -r https://github.com/scikit-build/scikit-build/raw/master/requirements-dev.txt
 
   echo debug用ライブラリをダウンロードしてます
   curl -L -o %TEMP%\dev_d_%d.msi https://www.python.org/ftp/python/%d/amd64/dev_d.msi
@@ -120,12 +129,11 @@ for /d %d in (*) do (
   del /s /q %TEMP%\dev_d_%d.msi
 )
 
-mv %LOCALAPPDATA%\Microsoft\WindowsApps\python.exe %LOCALAPPDATA%\Microsoft\WindowsApps\_python.exe
-mv %LOCALAPPDATA%\Microsoft\WindowsApps\python3.exe %LOCALAPPDATA%\Microsoft\WindowsApps\_python3.exe
+pyenv local %PYTHONVERSION%
 
 ```
-* dev_d.msiをダウンロードしている理由 -> python39_d.libが欲しいため
 
+### (3) TODO
 
 ### (4) [poetry](https://github.com/python-poetry/poetry)
 ```powershell
