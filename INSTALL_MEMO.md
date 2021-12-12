@@ -100,14 +100,13 @@ echo "python %PYTHONVERSION% の他に必要なバージョンがあればここ
 
 pyenv global %PYTHONVERSION%
 pyenv --version
+pyenv update
+pyenv install -l
 
-grep -rl "chcp 1250" * | xargs sed -i "s/chcp 1250/chcp 65001/g"
+grep -rl "chcp 1250" * | xargs sed -i "s/chcp 1250/chcp 932/g"
 echo sedする理由は https://github.com/pyenv-win/pyenv-win/issues/51
 
 pyenv rehash
-
-pyenv update
-pyenv install -l
 
 cd %PYENV%\versions
 for /d %d in (*) do (
