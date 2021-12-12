@@ -38,7 +38,7 @@ exit
 ```
 set GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
 
-setx Path "%Path:%GOMI%;=%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%";%APPDATA%\npm;%GOMI%
+setx Path "%Path:%GOMI%;=%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm;%GOMI%"
 
 exit
 
@@ -211,23 +211,13 @@ poetry config cache-dir "%POETRY_HOME%\pypoetry\Cache"
 ```powershell
 echo LLVM インストール...
 dunzip %IDEROOT% https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/LLVM-13.0.0-win64.exe
-
-curl -L -o %TEMP%\llvm.zip https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/LLVM-13.0.0-win64.exe
-7z x -o%IDEROOT% %TEMP%\llvm.zip
-del %TEMP%\llvm.zip
 rd /s /q %IDEROOT%\\$PLUGINSDIR
 
 echo CMake インストール...
-curl -L -o %TEMP%\cmake.zip https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-windows-x86_64.zip
-7z x -o%TEMP%\cmake %TEMP%\cmake.zip
-bash -c "cp -fR $TEMP/cmake/cmake*/* $IDEROOT/"
-del %TEMP%\cmake.zip
-rd /s /q %TEMP%\cmake
+dunzip %IDEROOT% https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-windows-x86_64.zip cmake*/*
 
 echo Ninja インストール...
-curl -L -o%TEMP%\ninja.zip https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip
-7z x -o%IDEROOT%\bin %TEMP%\ninja.zip
-del /s /q %TEMP%\ninja.zip
+dunzip %IDEROOT%\bin https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip
 
 ```
 
@@ -243,6 +233,7 @@ del /s /q %TEMP%\ninja.zip
 
 ```powershell
 echo VSCodeインストールしてます
+dunzip "%VSCODE_HOME%" "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive"
 curl -L -o "%TEMP%\download_vscode.zip" "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive"
 7z x -aoa -o"%VSCODE_HOME%" "%TEMP%\download_vscode.zip"
 del /s /q "%TEMP%\download_vscode.zip"
@@ -260,12 +251,8 @@ cp %SHORTCUT% %USERPROFILE%\Desktop
 
 
 ```
-curl -L -o %TEMP%\node.zip https://nodejs.org/dist/v16.13.1/node-v16.13.1-win-x64.zip
-7z x -o%TEMP% %TEMP%\node.zip
-mv "%TEMP%"/node-v* "%NODEJS_HOME%"
-node --version
-npm --version
-rm -rf %TEMP%/node.zip %TEMP%/node-v*
+dunzip "%NODEJS_HOME%" https://nodejs.org/dist/v16.13.1/node-v16.13.1-win-x64.zip node-v*/*
+
 ```
 
 ## 4. 個人的な初期設定
