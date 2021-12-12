@@ -28,7 +28,9 @@ setx PYTHONVERSION 3.9.6
 setx PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
 setx POETRY_HOME %USRLOCAL%\poetry
 setx NODEJS_HOME %USRLOCAL%\nodejs
+
 exit
+
 ```
 
 ### (2) Path追加
