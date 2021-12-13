@@ -32,8 +32,7 @@ setx PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
 setx POETRY_HOME %USRLOCAL%\poetry
 setx NODEJS_HOME %USRLOCAL%\nodejs
 
-set GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
-setx Path "%Path:%GOMI%;=%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm;%GOMI%"
+setx Path "C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm"
 
 exit
 
@@ -171,7 +170,8 @@ unix2dos $IDEROOT/cmd/dunzip.cmd
 
 cp $IDEROOT/cmd/dunzip.cmd $IDEROOT/cmd/getlatest.cmd
 
-
+set GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
+for /f "tokens=*" %a in ('echo %Path% | sed -E "s@(.*)(;%GOMI%)(.*)@\1\3\2@g"') do setx Path "%a"
 exit
 
 ```
