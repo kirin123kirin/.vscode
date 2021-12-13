@@ -18,13 +18,16 @@
 ## 1. 環境変数設定
 
 ### (1) ユーザ環境変数等
+* IDEROOTはインストール先ディレクトリパス
+* PYTHONVERSIONは pyenvで指定可能なバージョン
 ```powershell
 setx IDEROOT C:\ide
+setx PYTHONVERSION 3.9.6
+
 setx VSCODE_HOME %IDEROOT%\VSCode
 setx USRLOCAL %IDEROOT%\usr\local
 setx PYENV_ROOT %USRLOCAL%\pyenv
 setx PYENV %PYENV_ROOT%\pyenv-win
-setx PYTHONVERSION 3.9.6
 setx PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
 setx POETRY_HOME %USRLOCAL%\poetry
 setx NODEJS_HOME %USRLOCAL%\nodejs
@@ -48,7 +51,7 @@ setx Path "%Path:%GOMI%;=%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;
 exit
 
 ```
-* PYTHONVERSIONは pyenvで指定可能なバージョン
+
 
 ## 2. とりあえず入れるもの
 デフォルト設定でインストール
@@ -374,7 +377,7 @@ EOF
 unix2dos $IDEROOT/cmd/regvalue.cmd
 
 
-cat <<EOF > $IDEROOT/cmd/path_toslash.cmd
+cat <<EOF > $IDEROOT/cmd/toslash.cmd
 @echo off
 set argc=0
 for %%a in ( %* ) do set /a argc+=1
@@ -391,7 +394,7 @@ set argc=
 for /f "tokens=*" %%a in ('echo %2 ^| sed "s/\\\\\\/\\//g"') do set %1=%%a
 
 EOF
-unix2dos $IDEROOT/cmd/path_toslash.cmd
+unix2dos $IDEROOT/cmd/toslash.cmd
 
 exit
 
@@ -402,9 +405,9 @@ regvalue MSVC_ROOT "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\Setup" "S
 set MSVC_ROOT=%MSVC_ROOT:\Shared=%
 
 evalvar PROCESSOR_ARCH "echo %PROCESSOR_ARCHITECTURE% ^| tr '[A-Z]' '[a-z]'"
-path_toslash(IDEROOT_S)
-path_toslash(WKIT_S)
-path_toslash(MSVC_ROOT_S)
+toslash IDEROOT_S %IDEROOT%
+toslash WKIT_S %WKIT%
+toslash MSVC_ROOT_S %MSVC_ROOT%
 
 evalvar WKIT_LATEST_REVISION "ls ""%WKIT_S%/Lib"" ^| tail -1"
 evalvar VS_LATEST_VERSION "ls ""%MSVC_ROOT%"" ^| tail -1"
