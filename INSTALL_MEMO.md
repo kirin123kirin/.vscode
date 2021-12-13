@@ -43,7 +43,7 @@ exit
 
 ### (2) Path追加
 [ローカル変数"GOMI"とは？](https://zenn.dev/ef/articles/fede252753800b12f42b)
-```
+```powershell
 set GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
 
 setx Path "%Path:%GOMI%;=%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm;%GOMI%"
@@ -80,11 +80,12 @@ Invoke-WebRequest -UseBasicParsing -Uri $wgeturl -OutFile ${Env:TEMP}\wget.zip
 $giturl = GitLatestVersion "https://github.com/git-for-windows/git/releases" "Git.*64-bit.tar."
 wget.exe -O ${Env:TEMP}\git-for-windows.tar.bz2 $giturl
 
-exit
-
 echo %IDEROOT%にインストールしてます
-7z x %TEMP%\git-for-windows.tar.bz2 -so | 7z x -si -ttar -o%IDEROOT% -aoa
-del /s /q %TEMP%\git-for-windows.tar.bz2 %TEMP%\wget.zip
+7z x ${Env:TEMP}\git-for-windows.tar.bz2 -so | 7z x -si -ttar -o"${Env:IDEROOT}" -aoa
+del ${Env:TEMP}\git-for-windows.tar.bz2 ${Env:TEMP}\wget.zip
+
+exit
+exit
 
 ```
 * このエラーは気にしない
@@ -95,7 +96,7 @@ del /s /q %TEMP%\git-for-windows.tar.bz2 %TEMP%\wget.zip
 
 1. ダウンロード＆解凍用コマンドの作成(この後ダウンロードしまくるので作業用のシェル)
 
-```
+```shell
 bash
 
 cat <<EOF > $IDEROOT/cmd/dunzip.sh
@@ -339,7 +340,7 @@ mshta vbscript:execute("MsgBox(""ステータスバーのダウンロードが�
 ### (2) Git config global & PyPI config
 ユーザ名とEmailを入力してください。
 
-```bash
+```shell
 echo git configとpypircの設定を行います。
 
 bash
@@ -390,7 +391,7 @@ exit
 Windows SDK? Visual Studioのパスが死ぬほどめんどくさいので
 無理やり環境変数INCLUDE、LIBPATHをぶち込む
 
-```bash
+```shell
 
 bash
 
