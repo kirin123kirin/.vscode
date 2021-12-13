@@ -79,41 +79,88 @@ del /s /q %TEMP%\git-for-windows.tar.bz2 %TEMP%\wget.zip
 ## 3. 個人的に外せない開発環境
 ### (0) 下準備
 
-1. ダウンロード＆解凍用コマンドの作成(この後ダウンロードしまくるので)
+1. ダウンロード＆解凍用コマンドの作成(この後ダウンロードしまくるので作業用のシェル)
 
 ```
 bash
+
+cat <<EOF > $IDEROOT/cmd/dunzip.sh
+#!bash
+if [[ $# < 2 ]]; then
+    echo "This Script is download and extract" >&2
+    MYNAME=`basename $0 | sed -E "s/\.sh$//g"`
+    echo "Usage: ${MYNAME} <extract target directory> <download URL> [extract wildcard rule]" >&2
+    exit 1
+fi
+
+set -eu
+RETCODE=0
+function catch {
+  RETCODE=1
+}
+trap catch ERR
+
+
+TMPNAME="${LOCALAPPDATA//\\/\/}"/Temp/workdir_download_will_unzip
+
+rm -rf "${TMPNAME}"*
+curl -L -o "${TMPNAME}.zip" "$2"
+
+if [[ ! -d "$1" ]]; then
+    mkdir "$1"
+fi
+
+if [[ $# == 2 ]]; then
+  7z x -o"$1" "${TMPNAME}.zip" -aoa
+else
+  7z x -o"${TMPNAME}" "${TMPNAME}.zip" -aoa
+  cp -fR "${TMPNAME}"/$3 "$1"
+fi
+
+rm -rf "${TMPNAME}"*
+
+exit $RETCODE
+EOF
+
+cat <<EOF > $IDEROOT/cmd/getlatest.sh
+#!bash
+if [[ $# < 1 ]]; then
+    echo "This Script is find latest release version for windows installer file" >&2
+    MYNAME=`basename $0 | sed -E "s/\.sh$//g"`
+    echo "Usage: ${MYNAME} <URL>" >&2
+    echo "Example: ${MYNAME} https://github.com/git-for-windows/git/releases" >&2
+    exit 1
+fi
+
+URL="$1"
+
+if [[ $URL =~ ^https://github.com.*releases.* ]]; then
+  curl -sSL $URL | grep "<a href.*release.*download.*rel=\"nofollow\"" | sed -E 's;.*href="([^"]*).*;https://github.com\1;g' > $TEMP/work_latestlist.txt
+  grep `head -1 $TEMP/work_latestlist.txt | sed -E "s;.*download/([^/]+)/.*;\1;g"` $TEMP/work_latestlist.txt && rm -f $TEMP/work_latestlist.txt
+elif [[ $URL =~ ^https://www.python.org/ftp.* ]]; then
+  curl -sSL https://www.python.org/downloads | grep '<a class="button" href="http' | sed -r 's;.*href="([^"]+)".*;\1;g' | grep ".exe$"
+elif [[ $URL =~ ^https://nodejs.org/.* ]]; then
+  curl -sSL https://nodejs.org/dist/latest/ | sed -E 's;.*href="([^"]+)".*;https://nodejs.org/dist/latest/\1;g' | grep "win-x64.zip"
+else
+  echo "error: Unknown URLType $URL" >&2
+  exit 1
+fi
+EOF
+
+
 cat <<EOF > $IDEROOT/cmd/dunzip.cmd
 @echo off
-set argc=0
-for %%a in ( %* ) do set /a argc+=1
-
-if %argc% lss 2 (
-  echo This is download and extract
-  echo Usage: dunzip.cmd ^<extract target directory^> ^<download URL^> ^<extract wildcard rule^>
-  set argc=
-  exit /b 1
-)
-
-set TMPNAME="%TEMP%"/workdir_download_will_unzip
-
-rm -rf %TMPNAME%*
-curl -L -o %TMPNAME%.zip %2
-
-7z x -o%TMPNAME% %TMPNAME%.zip
-
-if not exist %1 (mkdir %1)
-
-if "%3"=="" (
-  mv -f %TMPNAME%/* %TMPNAME%/.* %1 2>&1 | grep -v "/.. to a subdirectory of itself" | grep -v ""
-) else (
-  mv -f %TMPNAME%/%3 %1
-)
-
-rm -rf %TMPNAME%*
-
+@rem This Script is Simply Transfer to (Same Filename).sh
+bash %~dp0\%~n0.sh %*
 EOF
+
+
+unix2dos $IDEROOT/cmd/dunzip.sh
+unix2dos $IDEROOT/cmd/getlatest.sh
 unix2dos $IDEROOT/cmd/dunzip.cmd
+
+cp $IDEROOT/cmd/dunzip.cmd $IDEROOT/cmd/getlatest.cmd
+
 
 exit
 
@@ -122,17 +169,14 @@ exit
 2. [fzf](https://github.com/junegunn/fzf#windows)をインストール
 3. [RipGrep](https://github.com/BurntSushi/ripgrep)をインストール
 4. [RipGrep-all](https://github.com/phiresky/ripgrep-all)をインストール
-5. [GNU版 grepに変更](http://gnuwin32.sourceforge.net/packages/grep.htm)をインストール
 
 ```
 
-dunzip %IDEROOT%/usr/bin https://github.com/junegunn/fzf/releases/download/0.28.0/fzf-0.28.0-windows_amd64.zip
+for /f "tokens=*" %u in ('getlatest "https://github.com/junegunn/fzf/releases" ^| grep windows_amd64') do dunzip %IDEROOT%/usr/bin "%u"
 
-dunzip %IDEROOT%/usr/bin https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep-13.0.0-x86_64-pc-windows-msvc.zip ripgrep-*/rg.exe
+for /f "tokens=*" %u in ('getlatest https://github.com/BurntSushi/ripgrep/releases ^| grep x86_64.*windows-msvc.zip') do dunzip %IDEROOT%/usr/bin "%u" ripgrep-*/rg.exe
 
-dunzip %IDEROOT%/usr/bin https://github.com/phiresky/ripgrep-all/releases/download/v0.9.6/ripgrep_all-v0.9.6-x86_64-pc-windows-msvc.zip ripgrep*/rga*.exe
-
-dunzip %IDEROOT%/usr/bin http://downloads.sourceforge.net/gnuwin32/grep-2.5.4-bin.zip
+for /f "tokens=*" %u in ('getlatest https://github.com/phiresky/ripgrep-all/releases ^| grep "x86_64.*windows-msvc.zip"') do dunzip %IDEROOT%/usr/bin "%u" ripgrep*/rga*.exe
 
 ```
 
@@ -171,7 +215,7 @@ echo python %PYTHONVERSION% の他に必要なバージョンがあれば、こ�
 ```powershell
 
 echo pyenv Issue51関連の不具合修正してます
-grep -rl "chcp 1250" * | xargs sed -i "s/chcp 1250/chcp 932/g"
+grep -rl "chcp 1250" * | xargs sed -i.bak "s/chcp 1250/chcp 932/g"
 pyenv rehash
 
 cd %PYENV%\versions
@@ -210,6 +254,7 @@ poetry self update
 poetry config --list
 poetry config virtualenvs.in-project true
 poetry config cache-dir "%POETRY_HOME%\pypoetry\Cache"
+poetry config --list
 
 ```
 
@@ -218,14 +263,13 @@ poetry config cache-dir "%POETRY_HOME%\pypoetry\Cache"
 
 ```powershell
 echo LLVM インストール...
-dunzip %IDEROOT% https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/LLVM-13.0.0-win64.exe
-rd /s /q %IDEROOT%\\$PLUGINSDIR
+for /f "tokens=*" %u in ('getlatest https://github.com/llvm/llvm-project/releases ^| grep win64.exe$') do dunzip %IDEROOT% "%u"
 
 echo CMake インストール...
-dunzip %IDEROOT% https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-windows-x86_64.zip cmake*/*
+for /f "tokens=*" %u in ('getlatest https://github.com/Kitware/CMake/releases ^| grep windows-x86_64.zip') do dunzip %IDEROOT% "%u" cmake*/*
 
 echo Ninja インストール...
-dunzip %IDEROOT%\bin https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip
+for /f "tokens=*" %u in ('https://github.com/ninja-build/ninja/releases ^| grep win') do dunzip %IDEROOT%/bin "%u"
 
 ```
 
@@ -242,11 +286,8 @@ dunzip %IDEROOT%\bin https://github.com/ninja-build/ninja/releases/download/v1.1
 ```powershell
 echo VSCodeインストールしてます
 dunzip "%VSCODE_HOME%" "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive"
-curl -L -o "%TEMP%\download_vscode.zip" "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive"
-7z x -aoa -o"%VSCODE_HOME%" "%TEMP%\download_vscode.zip"
-del /s /q "%TEMP%\download_vscode.zip"
 
-echo ショートカットを作成してます
+echo VSCodeのショートカットを作成してます
 set TARGET='%VSCODE_HOME%\Code.exe'
 set SHORTCUT='%APPDATA%\Microsoft\Windows\Start Menu\Code.lnk'
 powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut(%SHORTCUT%); $S.TargetPath = %TARGET%; $S.Save()"
@@ -259,7 +300,7 @@ cp %SHORTCUT% %USERPROFILE%\Desktop
 
 
 ```
-dunzip "%NODEJS_HOME%" https://nodejs.org/dist/v16.13.1/node-v16.13.1-win-x64.zip node-v*/*
+for /f "tokens=*" %u in ('getlatest https://nodejs.org/dist') do dunzip %NODEJS_HOME% "%u" node-v*/*
 
 ```
 
@@ -331,129 +372,46 @@ exit
 
 ---
 以下は別にやらなくても良い。
-### INCLUDE, LIBPATHの環境変数を作る
-Visual Studioのパスが死ぬほどめんどくさい
+### INCLUDE, LIBPATHの環境変数を作りたいだけ
+Windows SDK? Visual Studioのパスが死ぬほどめんどくさいので
+無理やり環境変数INCLUDE、LIBPATHをぶち込む
 
 ```bash
+
 bash
 
-cat <<EOF > $IDEROOT/cmd/evalvar.cmd
-@echo off
-set argc=0
-for %%a in ( %* ) do set /a argc+=1
+IDEROOT_S=`echo $IDEROOT | sed "s;\\\;/;g"`
+WKIT=$(reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed Roots" | grep "KitsRoot" | sed "s;\\\;/;g" | sed -E "s;.*KitsRoot.+\s\s([^\s].+)/$;\1;g")
 
-if %argc% lss 2 (
-  echo This is a command to save the result of execution to a variable
-  echo Usage: regval.cmd ^<return variable^> ^<run command^>
-  set argc=
-  exit /b 1
-)
+MSVC_ROOT=$(reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\Setup" | grep "SharedInstallationPath" | sed "s;\\\;/;g" | sed -E "s;.*SharedInstallationPath.+\s\s([^\s].+)/Shared/?$;\1;g")
+MSBUILD=`ls -d "$MSVC_ROOT"/[0-9]*/BuildTools | tail -1`
+MSVC=`ls -d "$MSBUILD"/VC/Tools/MSVC/[0-9]* | tail -1`
+CLANGVERSION=`ls -d "$IDEROOT_S"/lib/clang | tail -1`
 
-set argc=
+INCLUDE=`ls -d "$(ls -d "$WKIT"/Include/[0-9]* | tail -1)"/* | tr '\n' ';'`
+INCLUDE="${INCLUDE};${MSVC}/include;$INCLUDE;$MSVC/include;$IDEROOT_S/usr/local/poetry/venv/Include;$IDEROOT_S/lib/clang/${CLANGVERSION}/include;$IDEROOT_S/include"
 
-for /f "tokens=*" %%a in ('%~2 ^| tr -d "\r" ^| tr "\n" " "') do set %1=%%a
+LIBPATH=`ls -d "$(ls -d "$WKIT"/Lib/[0-9]* | tail -1)"/*/$ARCH | tr '\n' ';'`
+LIBPATH="${LIBPATH};${MSVC}/lib/${ARCH};${LIBPATH};$IDEROOT_S/lib/clang/${CLANGVERSION}/lib"
+LIBPATH="${LIBPATH};$IDEROOT_S/usr/local/pyenv/pyenv-win/libexec/libs;$IDEROOT_S/usr/lib;$IDEROOT_S/lib"
 
+cat <<EOF > /tmp/setenv.bat
+setx INCLUDE "${INCLUDE}"
+setx LIBPATH "${LIBPATH}"
 EOF
-unix2dos $IDEROOT/cmd/evalvar.cmd
 
-
-cat <<EOF > $IDEROOT/cmd/regvalue.cmd
+cat <<EOF > $IDEROOT_S/vsdevcmd.cmd
 @echo off
-set argc=0
-for %%a in ( %* ) do set /a argc+=1
-
-if %argc% neq 3 (
-  echo This is the command to get the value of a registry key
-  echo Usage: regval.cmd ^<return variable^> ^<registry key path^> ^<key name^>
-  set argc=
-  exit /b 1
-)
-
-set argc=
-
-for /f "tokens=1,2,*" %%a in ('REG QUERY %2 /v %3') DO if not %%c=="" set %1=%%c
-
+@call "$MSBUILD/Common7/Tools/VsDevCmd.bat" %*
 EOF
-unix2dos $IDEROOT/cmd/regvalue.cmd
-
-
-cat <<EOF > $IDEROOT/cmd/toslash.cmd
-@echo off
-set argc=0
-for %%a in ( %* ) do set /a argc+=1
-
-if %argc% neq 2 (
-  echo This is a command to convert a Windows backslash path to a slash.
-  echo Usage: regval.cmd ^<return variable^> ^<Windows Path of backslash^>
-  set argc=
-  exit /b 1
-)
-
-set argc=
-
-for /f "tokens=*" %%a in ('echo %2 ^| sed "s/\\\\\\/\\//g"') do set %1=%%a
-
-EOF
-unix2dos $IDEROOT/cmd/toslash.cmd
+cp $IDEROOT_S/vsdevcmd.cmd $IDEROOT_S/vcvarsall.cmd
 
 exit
 
+call %IDEROOT%\tmp\setenv.bat && del %IDEROOT%\tmp\setenv.bat
 
-set ARCH=x64
-regvalue WKIT "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed Roots" "KitsRoot10"
-regvalue MSVC_ROOT "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\Setup" "SharedInstallationPath"
-set MSVC_ROOT=%MSVC_ROOT:\Shared=%
+exit
 
-evalvar PROCESSOR_ARCH "echo %PROCESSOR_ARCHITECTURE% ^| tr '[A-Z]' '[a-z]'"
-toslash IDEROOT_S "%IDEROOT%"
-toslash WKIT_S "%WKIT%"
-toslash MSVC_ROOT_S "%MSVC_ROOT%"
-
-evalvar WKIT_LATEST_REVISION "ls ""%WKIT_S%/Lib"" ^| tail -1"
-evalvar VS_LATEST_VERSION "ls ""%MSVC_ROOT%"" ^| tail -1"
-evalvar MSVC_LATEST_VERSION "ls ""%MSVC_ROOT%\VC\Tools\MSVC"" ^| tail -1"
-evalvar CLANG_VERSION "ls ""%IDEROOT%/lib/clang"" ^| tail -1"
-
-set MSBUILD_ROOT_S "%MSVC_ROOT_S%/%VS_LATEST_VERSION%/BuildTools"
-set MSBUILD_S "%MSVC_ROOT_S%/VC/Tools/MSVC/%MSVC_LATEST_VERSION%"
-
-set WKIT_LIBPATH_S=%WKIT_S%/Lib/%WKIT_LATEST_REVISION%
-set WKIT_INCLUDE_S=%WKIT_S%/Lib/%WKIT_LATEST_REVISION%
-
-set LIBPATH_S=%IDEROOT_S%/usr/local/lib
-set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/usr/local/pyenv/pyenv-win/versions/%PYTHONVERSION%/libs
-set LIBPATH_S=%LIBPATH_S%;%WKIT_LIBPATH_S%/ucrt/%ARCH%
-set LIBPATH_S=%LIBPATH_S%;%WKIT_LIBPATH_S%/ucrt_enclave/%ARCH%
-set LIBPATH_S=%LIBPATH_S%;%WKIT_LIBPATH_S%/um/%ARCH%
-set LIBPATH_S=%LIBPATH_S%;%MSBUILD_ROOT_S%/DIA SDK/lib/%PROCESSOR_ARCH%
-set LIBPATH_S=%LIBPATH_S%;%MSBUILD_S%/lib/%ARCH%
-set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/lib/clang/%CLANG_VERSION%/lib
-set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/usr/local/pyenv/pyenv-win/libexec/libs
-set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/usr/lib
-set LIBPATH_S=%LIBPATH_S%;%IDEROOT_S%/lib
-
-set INCLUDE_S=%IDEROOT_S%/usr/local/include
-set INCLUDE_S=%INCLUDE_S%;%IDEROOT_S%/usr/local/pyenv/pyenv-win/versions/%PYTHONVERSION%/include
-set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/cppwinrt
-set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/shared
-set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/ucrt
-set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/um
-set INCLUDE_S=%INCLUDE_S%;%WKIT_INCLUDE_S%/winrt
-set INCLUDE_S=%INCLUDE_S%;%MSBUILD_ROOT_S%/DIA SDK/include
-set INCLUDE_S=%INCLUDE_S%;%MSBUILD_ROOT_S%/VC/Auxiliary/VS/include
-set INCLUDE_S=%INCLUDE_S%;%MSBUILD_S%/include
-set INCLUDE_S=%INCLUDE_S%;%IDEROOT_S%/usr/local/poetry/venv/Include
-set INCLUDE_S=%INCLUDE_S%;%IDEROOT_S%/lib/clang/%CLANG_VERSION%/include
-set INCLUDE_S=%INCLUDE_S%;%IDEROOT_S%/include
-
-
-setx INCLUDE %INCLUDE_S%
-setx LIBPATH %LIBPATH_S%
-
-echo @call ^"^%MSBUILD_ROOT^%\Common7\Tools\VsDevCmd.bat^" %* > %IDEROOT%\bin\vsdevcmd.bat
-echo @call ^"^%MSBUILD_ROOT^%\VC\Auxiliary\Build\vcvarsall.bat^" %* > %IDEROOT%\bin\vcvarsall.bat
-echo @call ^"^%MSBUILD_ROOT^%\VC\Auxiliary\Build\vcvarsall.bat^" x64 %* > %IDEROOT%\bin\vcvars64.bat
-echo @call ^"^%MSBUILD_ROOT^%\VC\Auxiliary\Build\vcvarsall.bat^" x86 %* > %IDEROOT%\bin\vcvars32.bat
 
 ```
 以上、
