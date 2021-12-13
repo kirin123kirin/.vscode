@@ -264,6 +264,8 @@ for /d %d in (*) do (
 
 pyenv local %PYTHONVERSION%
 
+python -V
+
 ```
 
 ### (4) [poetry](https://github.com/python-poetry/poetry)
