@@ -69,21 +69,23 @@ mkdir %IDEROOT%\usr\bin
 echo GNU wgetと、Git for Windows をインストールしてます
 
 powershell
+cd ${Env:TEMP}
 
 Function GitLatestVersion ($url, $pattern) {
     $links = (Invoke-WebRequest -UseBasicParsing -Uri $url).Links
     return [string]::Concat("https://github.com", ($links.href | Select-String -Pattern $pattern | Select-Object -first 1) )
 }
 $wgeturl = GitLatestVersion "https://github.com/webfolderio/wget-windows/releases" ".*64bit-OpenSSL.zip"
-Invoke-WebRequest -UseBasicParsing -Uri $wgeturl -OutFile ${Env:TEMP}\wget.zip
-7z x -o"${Env:IDEROOT}\usr\bin" ${Env:TEMP}\wget.zip -aoa
+Invoke-WebRequest -UseBasicParsing -Uri $wgeturl -OutFile .\wget.zip
+7z.exe x -o"${Env:IDEROOT}\usr\bin" .\wget.zip -aoa
+if ($?) { del .\wget.zip }
 $giturl = GitLatestVersion "https://github.com/git-for-windows/git/releases" "Git.*64-bit.tar."
-wget.exe -O ${Env:TEMP}\git-for-windows.tar.bz2 $giturl
+wget.exe -O .\git-for-windows.tar.bz2 $giturl
 
 echo %IDEROOT%にインストールしてます
-7z x ${Env:TEMP}\git-for-windows.tar.bz2 -so | 7z x -si -ttar -o"${Env:IDEROOT}" -aoa
-del ${Env:TEMP}\git-for-windows.tar.bz2 ${Env:TEMP}\wget.zip
-
+7z.exe x .\git-for-windows.tar.bz2 -bsp2 && del .\git-for-windows.tar.bz2
+7z.exe x -o"${Env:IDEROOT}" .\git-for-windows.tar -aoa -bsp2
+if ($?) { del .\git-for-windows.tar }
 exit
 exit
 
