@@ -291,7 +291,7 @@ echo CMake インストール...
 for /f "tokens=*" %u in ('getlatest https://github.com/Kitware/CMake/releases ^| grep windows-x86_64.zip') do dunzip %IDEROOT% "%u" cmake*/*
 
 echo Ninja インストール...
-for /f "tokens=*" %u in ('https://github.com/ninja-build/ninja/releases ^| grep win') do dunzip %IDEROOT%/bin "%u"
+for /f "tokens=*" %u in ('getlatest https://github.com/ninja-build/ninja/releases ^| grep win') do dunzip %IDEROOT%/bin "%u"
 
 ```
 
