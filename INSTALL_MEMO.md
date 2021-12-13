@@ -13,9 +13,7 @@
 * SCM : Git for Windows
 * etc : nodejs, 7zip, sakura editor
 
-## <span style="color: red; ">注意：IDEROOT</span>に既存のディレクトリを指定したら
-同名のファイル又はディレクトリがある場合には、上書き良否確認などは一切せず
-<span style="color: red; ">強制的に上書き</span>するので新規ディレクトリの指定を強く推奨する。
+以降のコマンドライン手順はWindows標準のコマンドプロンプトへのインプット内容
 
 ## 1. 環境変数設定
 
@@ -34,6 +32,11 @@ setx NODEJS_HOME %USRLOCAL%\nodejs
 exit
 
 ```
+## <span style="color: red; ">注意：IDEROOT</span>に既存のディレクトリを指定したら
+同名のファイル又はディレクトリがある場合には、上書き良否確認などは一切せず
+<span style="color: red; ">強制的に上書き</span>するので
+<span style="color: red; ">新規ディレクトリの指定</span>を強く推奨する。
+
 
 ### (2) Path追加
 [ローカル変数"GOMI"とは？](https://zenn.dev/ef/articles/fede252753800b12f42b)
