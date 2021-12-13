@@ -83,7 +83,8 @@ $giturl = GitLatestVersion "https://github.com/git-for-windows/git/releases" "Gi
 wget.exe -O .\git-for-windows.tar.bz2 $giturl
 
 echo %IDEROOT%にインストールしてます
-7z.exe x .\git-for-windows.tar.bz2 -bsp2 && del .\git-for-windows.tar.bz2
+7z.exe x .\git-for-windows.tar.bz2 -bsp2
+if ($?) { del .\git-for-windows.tar.bz2 }
 7z.exe x -o"${Env:IDEROOT}" .\git-for-windows.tar -aoa -bsp2
 if ($?) { del .\git-for-windows.tar }
 exit
