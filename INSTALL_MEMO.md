@@ -20,7 +20,7 @@
 ### (1) ユーザ環境変数等
 * IDEROOTはインストール先ディレクトリパス
 * PYTHONVERSIONは pyenvで指定可能なバージョン
-```powershell
+```Batchfile
 setx IDEROOT C:\ide
 setx PYTHONVERSION 3.9.6
 
@@ -35,6 +35,7 @@ setx NODEJS_HOME %USRLOCAL%\nodejs
 exit
 
 ```
+
 ## <span style="color: red; ">注意：IDEROOT</span>に既存のディレクトリを指定したら
 同名のファイル又はディレクトリがある場合には、上書き良否確認などは一切せず
 <span style="color: red; ">強制的に上書き</span>するので
@@ -43,7 +44,7 @@ exit
 
 ### (2) Path追加
 [ローカル変数"GOMI"とは？](https://zenn.dev/ef/articles/fede252753800b12f42b)
-```powershell
+```Batchfile
 set GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
 
 setx Path "%Path:%GOMI%;=%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm;%GOMI%"
@@ -63,7 +64,7 @@ exit
 ### (3) [Git for Windows](https://github.com/git-for-windows/git/releases)
 最新版をインストール
 
-```powershell
+```Batchfile
 mkdir %IDEROOT%\usr\bin
 
 echo GNU wgetと、Git for Windows をインストールしてます
@@ -87,7 +88,6 @@ echo %IDEROOT%にインストールしてます
 if ($?) { del .\git-for-windows.tar.bz2 }
 7z.exe x -o"${Env:IDEROOT}" .\git-for-windows.tar -aoa -bsp2
 if ($?) { del .\git-for-windows.tar }
-exit
 exit
 
 ```
@@ -188,7 +188,7 @@ exit
 3. [RipGrep](https://github.com/BurntSushi/ripgrep)をインストール
 4. [RipGrep-all](https://github.com/phiresky/ripgrep-all)をインストール
 
-```
+```Batchfile
 
 for /f "tokens=*" %u in ('getlatest "https://github.com/junegunn/fzf/releases" ^| grep windows_amd64') do dunzip %IDEROOT%/usr/bin "%u"
 
@@ -200,7 +200,7 @@ for /f "tokens=*" %u in ('getlatest https://github.com/phiresky/ripgrep-all/rele
 
 ### (2) [Python(pyenv-win)](https://github.com/pyenv-win/pyenv-win)
 
-```powershell
+```Batchfile
 git clone https://github.com/pyenv-win/pyenv-win.git "%PYENV_ROOT%"
 cd "%PYENV_ROOT%"
 mv .version pyenv-win
@@ -230,7 +230,7 @@ echo python %PYTHONVERSION% の他に必要なバージョンがあれば、こ�
   * 開発用ライブラリのインストール
   * CAPI開発用にpythonXX_d.libのインストール
 
-```powershell
+```Batchfile
 
 echo pyenv Issue51関連の不具合修正してます
 grep -rl "chcp 1250" * | xargs sed -i.bak "s/chcp 1250/chcp 932/g"
@@ -265,7 +265,7 @@ pyenv local %PYTHONVERSION%
 ### (3) TODO
 
 ### (4) [poetry](https://github.com/python-poetry/poetry)
-```powershell
+```Batchfile
 curl -L https://install.python-poetry.org | python -
 poetry --version
 poetry self update
@@ -279,7 +279,7 @@ poetry config --list
 ### (5) C/C++ Build Tool
 #### [LLVM](https://github.com/llvm/llvm-project/releases) & [CMake](https://cmake.org/download/) & [Ninja](https://github.com/ninja-build/ninja/releases)
 
-```powershell
+```Batchfile
 echo LLVM インストール...
 for /f "tokens=*" %u in ('getlatest https://github.com/llvm/llvm-project/releases ^| grep win64.exe$') do dunzip %IDEROOT% "%u"
 
@@ -301,7 +301,7 @@ for /f "tokens=*" %u in ('https://github.com/ninja-build/ninja/releases ^| grep 
 
 ### (7) [VSCode](https://code.visualstudio.com/)
 
-```powershell
+```Batchfile
 echo VSCodeインストールしてます
 dunzip "%VSCODE_HOME%" "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive"
 
@@ -317,7 +317,7 @@ cp %SHORTCUT% %USERPROFILE%\Desktop
 インストーラ -> [v17.2.0 直リンク](https://nodejs.org/dist/v17.2.0/node-v17.2.0-x64.msi)
 
 
-```
+```Batchfile
 for /f "tokens=*" %u in ('getlatest https://nodejs.org/dist') do dunzip %NODEJS_HOME% "%u" node-v*/*
 
 ```
@@ -325,7 +325,7 @@ for /f "tokens=*" %u in ('getlatest https://nodejs.org/dist') do dunzip %NODEJS_
 ## 4. 個人的な初期設定
 ### (1) VSCode
 
-```powershell
+```Batchfile
 echo 拡張機能をインストールします
 bash -c 'curl -sSL https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt | xargs -L1 code --install-extension'
 
