@@ -13,7 +13,7 @@
 * SCM : Git for Windows
 * etc : nodejs, 7zip, sakura editor
 
-<span style="color: red; ">注意：IDEROOT</span>に既存のディレクトリを指定したら
+## <span style="color: red; ">注意：IDEROOT</span>に既存のディレクトリを指定したら
 同名のファイル又はディレクトリがある場合には、上書き良否確認などは一切せず
 <span style="color: red; ">強制的に上書き</span>するので新規ディレクトリの指定を強く推奨する。
 
