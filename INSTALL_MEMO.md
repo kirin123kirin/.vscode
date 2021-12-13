@@ -13,7 +13,9 @@
 * SCM : Git for Windows
 * etc : nodejs, 7zip, sakura editor
 
-2021/12/10 時点での最新版を例に以下の手順を示す
+<span style="color: red; ">注意：IDEROOT</span>に既存のディレクトリを指定したら
+同名のファイル又はディレクトリがある場合には、上書き良否確認などは一切せず
+<span style="color: red; ">強制的に上書き</span>するので新規ディレクトリの指定を強く推奨する。
 
 ## 1. 環境変数設定
 
