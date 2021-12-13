@@ -339,8 +339,9 @@ curl -L -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/k
 echo キーバインドの設定中
 curl -L -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
 
-code
 mshta vbscript:execute("MsgBox(""ステータスバーのダウンロードが完了するまで待ってVSCodeを再起動してください""):close")
+
+code
 
 ```
 
