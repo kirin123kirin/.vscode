@@ -403,7 +403,7 @@ Windows SDK? Visual Studioのパスが死ぬほどめんどくさいので
 
 bash
 
-IDEROOT_S=`echo $IDEROOT | sed "s;\\\;/;g"`
+IDEROOT_S=$(echo $IDEROOT | sed "s;\\\;/;g")
 WKIT=$(reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed Roots" | grep "KitsRoot" | sed "s;\\\;/;g" | sed -E "s;.*KitsRoot.+\s\s([^\s].+)/$;\1;g")
 
 MSVC_ROOT=$(reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\Setup" | grep "SharedInstallationPath" | sed "s;\\\;/;g" | sed -E "s;.*SharedInstallationPath.+\s\s([^\s].+)/Shared/?$;\1;g")
