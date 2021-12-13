@@ -32,6 +32,9 @@ setx PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
 setx POETRY_HOME %USRLOCAL%\poetry
 setx NODEJS_HOME %USRLOCAL%\nodejs
 
+set GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
+setx Path "%Path:%GOMI%;=%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm;%GOMI%"
+
 exit
 
 ```
@@ -41,18 +44,7 @@ exit
 <span style="color: red; ">強制的に上書き</span>するので
 <span style="color: red; ">新規ディレクトリの指定</span>を強く推奨する。
 
-
-### (2) Path追加
-[ローカル変数"GOMI"とは？](https://zenn.dev/ef/articles/fede252753800b12f42b)
-```Batchfile
-set GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
-
-setx Path "%Path:%GOMI%;=%;C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm;%GOMI%"
-
-exit
-
-```
-
+### [ローカル変数"GOMI"とは？](https://zenn.dev/ef/articles/fede252753800b12f42b)
 
 ## 2. とりあえず入れるもの
 デフォルト設定でインストール
