@@ -93,7 +93,7 @@ exit
 ```shell
 bash
 
-cat <<EOF > $IDEROOT/cmd/dunzip.sh
+cat <<'EOF' > $IDEROOT/cmd/dunzip.sh
 #!bash
 if [[ $# < 2 ]]; then
     echo "This Script is download and extract" >&2
@@ -131,7 +131,7 @@ rm -rf "${TMPNAME}"*
 exit $RETCODE
 EOF
 
-cat <<EOF > $IDEROOT/cmd/getlatest.sh
+cat <<'EOF' > $IDEROOT/cmd/getlatest.sh
 #!bash
 if [[ $# < 1 ]]; then
     echo "This Script is find latest release version for windows installer file" >&2
@@ -157,7 +157,7 @@ fi
 EOF
 
 
-cat <<EOF > $IDEROOT/cmd/dunzip.cmd
+cat <<'EOF' > $IDEROOT/cmd/dunzip.cmd
 @echo off
 @rem This Script is Simply Transfer to (Same Filename).sh
 bash %~dp0\%~n0.sh %*
@@ -339,7 +339,7 @@ echo git configとpypircの設定を行います。
 
 bash
 
-cat<<EOF > ~/.gitconfig
+cat<<'EOF' > ~/.gitconfig
 [user]
 	       email = 
 	       name = 
@@ -356,7 +356,7 @@ EOF
 
 notepad ~/.gitconfig
 
-cat<<EOF > ~/.pypirc
+cat<<'EOF' > ~/.pypirc
 [distutils]
 index-servers=
     pypi
