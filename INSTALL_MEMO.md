@@ -405,9 +405,9 @@ regvalue MSVC_ROOT "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\Setup" "S
 set MSVC_ROOT=%MSVC_ROOT:\Shared=%
 
 evalvar PROCESSOR_ARCH "echo %PROCESSOR_ARCHITECTURE% ^| tr '[A-Z]' '[a-z]'"
-toslash IDEROOT_S %IDEROOT%
-toslash WKIT_S %WKIT%
-toslash MSVC_ROOT_S %MSVC_ROOT%
+toslash IDEROOT_S "%IDEROOT%"
+toslash WKIT_S "%WKIT%"
+toslash MSVC_ROOT_S "%MSVC_ROOT%"
 
 evalvar WKIT_LATEST_REVISION "ls ""%WKIT_S%/Lib"" ^| tail -1"
 evalvar VS_LATEST_VERSION "ls ""%MSVC_ROOT%"" ^| tail -1"
