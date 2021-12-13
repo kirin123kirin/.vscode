@@ -95,9 +95,9 @@ exit
   * 「ERROR: Cannot create symbolic link : クライアントは要求された特権を保有していません。 : fd, stderr, stdin, stdout, mtab」
 
 ## 3. 個人的に外せない開発環境
-### (0) 下準備
-
-1. ダウンロード＆解凍用コマンドの作成(この後ダウンロードしまくるので作業用のシェル)
+### (1) 個別コマンドの作成
+1. セットアップ用
+この後の手順でダウンロードしまくる作業用のシェル
 
 ```shell
 bash
@@ -184,6 +184,7 @@ exit
 
 ```
 
+お気に入りのコマンドDL
 2. [fzf](https://github.com/junegunn/fzf#windows)をインストール
 3. [RipGrep](https://github.com/BurntSushi/ripgrep)をインストール
 4. [RipGrep-all](https://github.com/phiresky/ripgrep-all)をインストール
@@ -261,8 +262,6 @@ for /d %d in (*) do (
 pyenv local %PYTHONVERSION%
 
 ```
-
-### (3) TODO
 
 ### (4) [poetry](https://github.com/python-poetry/poetry)
 ```Batchfile
