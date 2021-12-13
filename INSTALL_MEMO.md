@@ -21,18 +21,29 @@
 * IDEROOTはインストール先ディレクトリパス
 * PYTHONVERSIONは pyenvで指定可能なバージョン
 ```Batchfile
-setx IDEROOT C:\ide
-setx PYTHONVERSION 3.9.6
+set IDEROOT C:\ide
+set PYTHONVERSION 3.9.6
 
-setx VSCODE_HOME %IDEROOT%\VSCode
-setx USRLOCAL %IDEROOT%\usr\local
-setx PYENV_ROOT %USRLOCAL%\pyenv
-setx PYENV %PYENV_ROOT%\pyenv-win
-setx PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
-setx POETRY_HOME %USRLOCAL%\poetry
-setx NODEJS_HOME %USRLOCAL%\nodejs
+set VSCODE_HOME %IDEROOT%\VSCode
+set USRLOCAL %IDEROOT%\usr\local
+set PYENV_ROOT %USRLOCAL%\pyenv
+set PYENV %PYENV_ROOT%\pyenv-win
+set PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
+set POETRY_HOME %USRLOCAL%\poetry
+set NODEJS_HOME %USRLOCAL%\nodejs
 
 setx Path "C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm"
+
+setx IDEROOT %IDEROOT%
+setx PYTHONVERSION %PYTHONVERSION%
+setx VSCODE_HOME %VSCODE_HOME%
+setx USRLOCAL %USRLOCAL%
+setx PYENV_ROOT %PYENV_ROOT%
+setx PYENV %PYENV%
+setx PYTHONPATH %PYTHONPATH%
+setx POETRY_HOME %POETRY_HOME%
+setx NODEJS_HOME %NODEJS_HOME%
+
 
 exit
 
