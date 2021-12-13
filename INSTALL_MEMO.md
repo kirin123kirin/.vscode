@@ -76,7 +76,7 @@ Function GitLatestVersion ($url, $pattern) {
 }
 $wgeturl = GitLatestVersion "https://github.com/webfolderio/wget-windows/releases" ".*64bit-OpenSSL.zip"
 Invoke-WebRequest -UseBasicParsing -Uri $wgeturl -OutFile ${Env:TEMP}\wget.zip
-7z x -o"${Env:IDEROOT}\usr\bin" ${Env:TEMP}\wget.zip
+7z x -o"${Env:IDEROOT}\usr\bin" ${Env:TEMP}\wget.zip -aoa
 $giturl = GitLatestVersion "https://github.com/git-for-windows/git/releases" "Git.*64-bit.tar."
 wget.exe -O ${Env:TEMP}\git-for-windows.tar.bz2 $giturl
 
