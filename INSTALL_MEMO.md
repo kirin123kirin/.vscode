@@ -57,39 +57,48 @@ exit
 ### [ローカル変数"GOMI"とは？](https://zenn.dev/ef/articles/fede252753800b12f42b)
 
 ## 2. とりあえず入れるもの
-デフォルト設定でインストール
-### (1) [7zip](https://sevenzip.osdn.jp/download.html)
-これ必須 -> [v21.06 直リンク](https://www.7-zip.org/a/7z2106-x64.exe)
-### (2) [サクラエディタ](https://github.com/sakura-editor/sakura/releases)
-なんでもよいけど -> [v2.4.1 直リンク](https://github.com/sakura-editor/sakura/releases/download/v2.4.1/sakura-tag-v2.4.1-build2849-ee8234f-Win32-Release-Installer.zip)
-
-### (3) [Git for Windows](https://github.com/git-for-windows/git/releases)
-最新版をインストール
+以下最新版をインストールします
+### (1) [Windows用Wget](https://sevenzip.osdn.jp/download.html) ※Invoke-WebRequestは遅すぎるのとcurlよりファイルサイズが小さいため
+### (2) [7zip](https://sevenzip.osdn.jp/download.html) ※この後の作業で必須
+### (3) [サクラエディタ](https://github.com/sakura-editor/sakura/releases) ※好み。なんでもよい
+### (4) [Git for Windows](https://github.com/git-for-windows/git/releases) ※Git必須なのと、mingw環境もそこそこ活用するため
 
 ```Batchfile
-mkdir %IDEROOT%\usr\bin
-
-echo GNU wgetと、Git for Windows をインストールしてます
-
-powershell
-cd ${Env:TEMP}
-
-Function GitLatestVersion ($url, $pattern) {
-    $links = (Invoke-WebRequest -UseBasicParsing -Uri $url).Links
-    return [string]::Concat("https://github.com", ($links.href | Select-String -Pattern $pattern | Select-Object -first 1) )
-}
-$wgeturl = GitLatestVersion "https://github.com/webfolderio/wget-windows/releases" ".*64bit-OpenSSL.zip"
+## Wget.exe download
+$links = (Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/webfolderio/wget-windows/releases").Links
+$wgeturl = [string]::Concat("https://github.com", ($links.href | Select-String -Pattern ".*64bit-OpenSSL.zip" | Select-Object -first 1) )
 Invoke-WebRequest -UseBasicParsing -Uri $wgeturl -OutFile .\wget.zip
-7z.exe x -o"${Env:IDEROOT}\usr\bin" .\wget.zip -aoa
+Expand-Archive -Force -Path .\wget.zip -DestinationPath "${Env:IDEROOT}\usr\bin"
 if ($?) { del .\wget.zip }
+
+## Make Github release Latest URL get function
+Function GitLatestVersion ($url, $pattern) {
+    $lasthref = wget.exe -nv -qO- $url | Select-String -Pattern ("<a href=.*" + $pattern) | Select-Object -first 1
+    [regex]::replace($lasthref, '^.*<a href="(.+)" rel=.*$', { "https://github.com" + $args.groups[1].value })
+}
+
+## 7Zip Install
+wget.exe https://sourceforge.net/projects/sevenzip/files/latest/download -O 7zip.exe
+Start-Process -Verb runas .\7zip.exe
+if ($?) { del .\7zip.exe }
+
+## Sakura Editor Install
+$sakuraurl = GitLatestVersion "https://github.com/sakura-editor/sakura/releases" "Win32-Release-Installer.zip"
+wget.exe -O .\sakura.zip $sakuraurl
+7z x .\sakura.zip
+Start-Process -Verb runas .\sakura_install*.exe
+if ($?) { del .\sakura* }
+
+## Git for Windows Install
 $giturl = GitLatestVersion "https://github.com/git-for-windows/git/releases" "Git.*64-bit.tar."
 wget.exe -O .\git-for-windows.tar.bz2 $giturl
-
 echo %IDEROOT%にインストールしてます
 7z.exe x .\git-for-windows.tar.bz2 -bsp2
 if ($?) { del .\git-for-windows.tar.bz2 }
 7z.exe x -o"${Env:IDEROOT}" .\git-for-windows.tar -aoa -bsp2
 if ($?) { del .\git-for-windows.tar }
+rm -Recurse ${Env:IDEROOT}\'\$PLUGINSDIR\'
+
 exit
 
 ```
@@ -297,11 +306,17 @@ for /f "tokens=*" %u in ('getlatest https://github.com/ninja-build/ninja/release
 
 ### (6) C/C++ Windows headers & libraries
 #### [Microsoft BuildTools](https://visualstudio.microsoft.com/ja/visual-cpp-build-tools/)
-インストーラ → [VSBuildTools(2022) 直リンク](https://aka.ms/vs/17/release/vs_BuildTools.exe)
 
-* 個別のコンポーネント : 検索窓で以下の２つを最低限選択する
+### インストールウィザード手順
+* 個別のコンポーネントタブを選択 : 検索窓で以下の２つを最低限選択する
  * MSVC x64 ビルド ツール 最新
  * Windows 10 SDK
+
+```
+curl -L https://aka.ms/vs/17/release/vs_BuildTools.exe -o %TEMP%\vs_BuildTools.exe
+cmd /k %TEMP%\vs_BuildTools.exe && rm %TEMP%\vs_BuildTools.exe
+
+```
 
 ### (7) [VSCode](https://code.visualstudio.com/)
 
@@ -317,10 +332,7 @@ cp %SHORTCUT% %USERPROFILE%\Desktop
 
 ```
 
-### (8) [Node.js](https://nodejs.org/ja/)
-インストーラ -> [v17.2.0 直リンク](https://nodejs.org/dist/v17.2.0/node-v17.2.0-x64.msi)
-
-
+### (8) 必要なら[Node.js](https://nodejs.org/ja/)
 ```Batchfile
 for /f "tokens=*" %u in ('getlatest https://nodejs.org/dist') do dunzip %NODEJS_HOME% "%u" node-v*/*
 
