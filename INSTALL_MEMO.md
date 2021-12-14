@@ -332,6 +332,12 @@ for /f "tokens=*" %u in ('getlatest https://github.com/ninja-build/ninja/release
 
 ```
 
+### (6) 必要なら[Node.js](https://nodejs.org/ja/)インストール
+```Batchfile
+for /f "tokens=*" %u in ('getlatest https://nodejs.org/dist') do dunzip %NODEJS_HOME% "%u" node-v*/*
+
+```
+
 ### (7) [VSCode](https://code.visualstudio.com/)インストール
 
 ```Batchfile
@@ -346,11 +352,6 @@ cp %SHORTCUT% %USERPROFILE%\Desktop
 
 ```
 
-### (8) 必要なら[Node.js](https://nodejs.org/ja/)インストール
-```Batchfile
-for /f "tokens=*" %u in ('getlatest https://nodejs.org/dist') do dunzip %NODEJS_HOME% "%u" node-v*/*
-
-```
 
 ## 4. 個人的な初期設定
 ### (1) VSCodeユーザ設定
@@ -365,9 +366,7 @@ curl -L -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/k
 echo キーバインドの設定中
 curl -L -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
 
-start /wait mshta vbscript:execute("MsgBox(""ステータスバーのダウンロードが完了するまで待ってVSCodeを再起動してください""):close")
-
-code
+for /f "delims=" %I in ('start /min /b /wait MSHTA.EXE vbscript:Execute("CreateObject(""Scripting.FileSystemObject"").GetStandardStream(1).Write MsgBox(""ステータスバーのダウンロードが完了するまで待ってVSCodeを再起動してください"",VbMsgBoxSetForeground,""VSCodeセットアップ""):close"^)') do code
 
 ```
 
