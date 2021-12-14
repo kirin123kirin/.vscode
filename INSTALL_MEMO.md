@@ -221,17 +221,18 @@ unix2dos $IDEROOT/cmd/dunzip.cmd
 
 cp $IDEROOT/cmd/dunzip.cmd $IDEROOT/cmd/getlatest.cmd
 
+cd /cmd
+
+## fzf
+dunzip.sh /usr/bin `getlatest.sh "https://github.com/junegunn/fzf/releases" | grep windows_amd64`
+
+## ripgrep
+dunzip.sh /usr/bin `getlatest.sh https://github.com/BurntSushi/ripgrep/releases | grep x86_64.*windows-msvc.zip` ripgrep-*/rg.exeem
+
+## ripgrep-all
+dunzip.sh /usr/bin `getlatest.sh https://github.com/phiresky/ripgrep-all/releases | grep "x86_64.*windows-msvc.zip"` ripgrep*/rga*.exe
+
 exit
-
-@REM fzf
-for /f "tokens=*" %u in ('getlatest "https://github.com/junegunn/fzf/releases" ^| grep windows_amd64') do dunzip %IDEROOT%/usr/bin "%u"
-
-@REM ripgrep
-for /f "tokens=*" %u in ('getlatest https://github.com/BurntSushi/ripgrep/releases ^| grep x86_64.*windows-msvc.zip') do dunzip %IDEROOT%/usr/bin "%u" ripgrep-*/rg.exe
-
-@REM ripgrep-all
-for /f "tokens=*" %u in ('getlatest https://github.com/phiresky/ripgrep-all/releases ^| grep "x86_64.*windows-msvc.zip"') do dunzip %IDEROOT%/usr/bin "%u" ripgrep*/rga*.exe
-
 
 ```
 
@@ -304,7 +305,7 @@ python -V
 
 ```
 
-### (4) [poetry](https://github.com/python-poetry/poetry)
+### (4) [poetry](https://github.com/python-poetry/poetry)インストール
 ```Batchfile
 curl -L https://install.python-poetry.org | python -
 poetry --version
@@ -317,7 +318,7 @@ poetry config --list
 ```
 
 ### (5) C/C++ Build Tool
-#### [LLVM](https://github.com/llvm/llvm-project/releases) & [CMake](https://cmake.org/download/) & [Ninja](https://github.com/ninja-build/ninja/releases)
+#### [LLVM](https://github.com/llvm/llvm-project/releases) & [CMake](https://cmake.org/download/) & [Ninja](https://github.com/ninja-build/ninja/releases)インストール
 
 ```Batchfile
 echo LLVM インストール...
@@ -331,7 +332,7 @@ for /f "tokens=*" %u in ('getlatest https://github.com/ninja-build/ninja/release
 
 ```
 
-### (7) [VSCode](https://code.visualstudio.com/)
+### (7) [VSCode](https://code.visualstudio.com/)インストール
 
 ```Batchfile
 echo VSCodeインストールしてます
@@ -345,14 +346,14 @@ cp %SHORTCUT% %USERPROFILE%\Desktop
 
 ```
 
-### (8) 必要なら[Node.js](https://nodejs.org/ja/)
+### (8) 必要なら[Node.js](https://nodejs.org/ja/)インストール
 ```Batchfile
 for /f "tokens=*" %u in ('getlatest https://nodejs.org/dist') do dunzip %NODEJS_HOME% "%u" node-v*/*
 
 ```
 
 ## 4. 個人的な初期設定
-### (1) VSCode
+### (1) VSCodeユーザ設定
 
 ```Batchfile
 echo 拡張機能をインストールします
@@ -370,7 +371,7 @@ code
 
 ```
 
-### (2) Git config global & PyPI config
+### (2) Git config global & PyPI configユーザ設定
 ユーザ名とEmailを入力してください。
 
 ```shell
@@ -420,7 +421,7 @@ exit
 
 ---
 以下は別にやらなくても良い。
-### INCLUDE, LIBPATHの環境変数を作りたいだけ
+### INCLUDE, LIBPATHのユーザ環境変数設定
 Windows SDK? Visual Studioのパスが死ぬほどめんどくさいので
 無理やり環境変数INCLUDE、LIBPATHをぶち込む
 
