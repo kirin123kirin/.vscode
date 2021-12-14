@@ -92,7 +92,7 @@ if ($?) { del .\7zip.exe }
 $sakuraurl = GitLatestVersion "https://github.com/sakura-editor/sakura/releases" "Win32-Release-Installer.zip"
 wget.exe -O .\sakura.zip $sakuraurl
 7z x .\sakura.zip
-Start-Process -Verb runas -Wait .\sakura_install*.exe /silent
+Start-Process -Verb runas -Wait .\sakura_install*.exe /SP- /VERYSILENT /NORESTART
 if ($?) { del .\sakura* }
 
 ## Git for Windows
