@@ -418,7 +418,7 @@ LIBPATH=`ls -d "$(ls -d "$WKIT"/Lib/[0-9]* | tail -1)"/*/$ARCH | tr '\n' ';'`
 LIBPATH="${LIBPATH};${MSVC}/lib/${ARCH};${LIBPATH};$IDEROOT_S/lib/clang/${CLANGVERSION}/lib"
 LIBPATH="${LIBPATH};$IDEROOT_S/usr/local/pyenv/pyenv-win/libexec/libs;$IDEROOT_S/usr/lib;$IDEROOT_S/lib"
 
-cat <<EOF > /tmp/setenv.bat
+cat <<EOF > $TEMP/setenv.bat
 setx INCLUDE "${INCLUDE}"
 setx LIBPATH "${LIBPATH}"
 EOF
@@ -431,7 +431,7 @@ cp $IDEROOT_S/vsdevcmd.cmd $IDEROOT_S/vcvarsall.cmd
 
 exit
 
-call %IDEROOT%\tmp\setenv.bat && del %IDEROOT%\tmp\setenv.bat
+call %TEMP%\setenv.bat && del %TEMP%\setenv.bat
 
 exit
 
