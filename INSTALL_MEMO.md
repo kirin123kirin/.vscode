@@ -56,11 +56,16 @@ exit
 ## 2. とりあえず入れるもの
 以下最新版をインストールします
 ### (1) [Windows用Wget](https://sevenzip.osdn.jp/download.html) ※Invoke-WebRequestは遅すぎるのとcurlよりファイルサイズが小さいため
+### (2) [7zip](https://sevenzip.osdn.jp/download.html) ※この後の作業で必須
+### (3) [サクラエディタ](https://github.com/sakura-editor/sakura/releases) ※好み。なんでもよい
+### (4) [Git for Windows](https://github.com/git-for-windows/git/releases) ※Git必須なのと、mingw環境もそこそこ活用するため
+
 ```powershell
 cd %TEMP%
 
 powershell
 
+## Wget
 $links = (Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/webfolderio/wget-windows/releases").Links
 $wgeturl = [string]::Concat("https://github.com", ($links.href | Select-String -Pattern ".*64bit-OpenSSL.zip" | Select-Object -first 1) )
 Invoke-WebRequest -UseBasicParsing -Uri $wgeturl -OutFile .\wget.zip
@@ -73,28 +78,19 @@ Function GitLatestVersion ($url, $pattern) {
     [regex]::replace($lasthref, '^.*<a href="(.+)" rel=.*$', { "https://github.com" + $args.groups[1].value })
 }
 
-```
-
-### (2) [7zip](https://sevenzip.osdn.jp/download.html) ※この後の作業で必須
-```powershell
+## 7zip
 wget.exe https://sourceforge.net/projects/sevenzip/files/latest/download -O 7zip.exe
 Start-Process -Verb runas -Wait .\7zip.exe
 if ($?) { del .\7zip.exe }
 
-```
-
-### (3) [サクラエディタ](https://github.com/sakura-editor/sakura/releases) ※好み。なんでもよい
-```powershell
+## sakura editor
 $sakuraurl = GitLatestVersion "https://github.com/sakura-editor/sakura/releases" "Win32-Release-Installer.zip"
 wget.exe -O .\sakura.zip $sakuraurl
 7z x .\sakura.zip
-Start-Process -Verb runas -Wait .\sakura_install*.exe
+Start-Process -Verb runas -Wait .\sakura_install*.exe /silent
 if ($?) { del .\sakura* }
 
-```
-
-### (4) [Git for Windows](https://github.com/git-for-windows/git/releases) ※Git必須なのと、mingw環境もそこそこ活用するため
-```powershell
+## Git for Windows
 $giturl = GitLatestVersion "https://github.com/git-for-windows/git/releases" "Git.*64-bit.tar."
 wget.exe -O .\git-for-windows.tar.bz2 $giturl
 echo %IDEROOT%にインストールしてます
@@ -109,17 +105,43 @@ exit
 * このエラーは気にしない
   * 「ERROR: Cannot create symbolic link : クライアントは要求された特権を保有していません。 : fd, stderr, stdin, stdout, mtab」
 
+### (5) C/C++ Windows headers & libraries
+#### [Microsoft BuildTools](https://visualstudio.microsoft.com/ja/visual-cpp-build-tools/)
+
+##### インストールウィザード手順
+1. 個別のコンポーネントタブを選択
+2. 検索窓で以下のワードで絞り込む
+ * 「MSVC x64 ビルド ツール 最新」
+ * 「Windows 10 SDK」
+ この2つだけあれば最低限OK。5GBもいるけど、、
+
+```Batchfile
+curl -L https://aka.ms/vs/17/release/vs_BuildTools.exe -o %TEMP%\vs_BuildTools.exe
+cmd /k %TEMP%\vs_BuildTools.exe && rm %TEMP%\vs_BuildTools.exe
+
+
+```
+
+
 ## 3. 個人的に外せない開発環境
 ### (1) セットアップ、セットアップコマンドの作成
-* [ローカル変数"MS893GOMI"とは](https://zenn.dev/ef/articles/fede252753800b12f42b)
-    -> WindowsAppsのパスを後ろにズラすことで対処してる 
-* 後の手順で最新版ダウンロード用のワークシェル
-*   -> バッチファイルやpowershellは冗長で貧弱で難解すぎて怒りのbash
+1. [ローカル変数"MS893GOMI"とは](https://zenn.dev/ef/articles/fede252753800b12f42b)
+    -> WindowsAppsのパスを後ろにズラすことで対処してる
+
+2. 後の手順で最新版ダウンロード用のワークシェル
+    -> バッチファイルやpowershellは冗長で貧弱で難解すぎて怒りのbash
+
+3. お気に入りのコマンドDL
+  a. [fzf](https://github.com/junegunn/fzf#windows)をインストール
+  b. [RipGrep](https://github.com/BurntSushi/ripgrep)をインストール
+  c. [RipGrep-all](https://github.com/phiresky/ripgrep-all)をインストール
 
 ```shell
+@REM 1. Silent WindowsApps
 set MS893GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
 for /f "usebackq tokens=*" %a in (`echo "%Path%" ^| sed -E 's@"+(.*)(;%MS893GOMI:\=\\\%)(.*)"+@\1\3\2@g'`) do setx Path %a
 
+@REM 2. Make Work shell
 bash
 
 cat <<'EOF' > $IDEROOT/cmd/dunzip.sh
@@ -201,22 +223,18 @@ cp $IDEROOT/cmd/dunzip.cmd $IDEROOT/cmd/getlatest.cmd
 
 exit
 
-```
-
-お気に入りのコマンドDL
-2. [fzf](https://github.com/junegunn/fzf#windows)をインストール
-3. [RipGrep](https://github.com/BurntSushi/ripgrep)をインストール
-4. [RipGrep-all](https://github.com/phiresky/ripgrep-all)をインストール
-
-```Batchfile
-
+@REM fzf
 for /f "tokens=*" %u in ('getlatest "https://github.com/junegunn/fzf/releases" ^| grep windows_amd64') do dunzip %IDEROOT%/usr/bin "%u"
 
+@REM ripgrep
 for /f "tokens=*" %u in ('getlatest https://github.com/BurntSushi/ripgrep/releases ^| grep x86_64.*windows-msvc.zip') do dunzip %IDEROOT%/usr/bin "%u" ripgrep-*/rg.exe
 
+@REM ripgrep-all
 for /f "tokens=*" %u in ('getlatest https://github.com/phiresky/ripgrep-all/releases ^| grep "x86_64.*windows-msvc.zip"') do dunzip %IDEROOT%/usr/bin "%u" ripgrep*/rga*.exe
 
+
 ```
+
 
 ### (2) [Python(pyenv-win)](https://github.com/pyenv-win/pyenv-win)
 
@@ -235,6 +253,8 @@ pyenv update
 pyenv install -l | grep -v "win"
 
 echo python %PYTHONVERSION% の他に必要なバージョンがあれば、ここで入れてください。上に出ているバージョン一覧参照
+echo 例: pyenv install 2.7.18
+
 
 ```
 
@@ -311,20 +331,6 @@ for /f "tokens=*" %u in ('getlatest https://github.com/ninja-build/ninja/release
 
 ```
 
-### (6) C/C++ Windows headers & libraries
-#### [Microsoft BuildTools](https://visualstudio.microsoft.com/ja/visual-cpp-build-tools/)
-
-### インストールウィザード手順
-* 個別のコンポーネントタブを選択 : 検索窓で以下の２つを最低限選択する
- * MSVC x64 ビルド ツール 最新
- * Windows 10 SDK
-
-```
-curl -L https://aka.ms/vs/17/release/vs_BuildTools.exe -o %TEMP%\vs_BuildTools.exe
-cmd /k %TEMP%\vs_BuildTools.exe && rm %TEMP%\vs_BuildTools.exe
-
-```
-
 ### (7) [VSCode](https://code.visualstudio.com/)
 
 ```Batchfile
@@ -358,7 +364,7 @@ curl -L -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/k
 echo キーバインドの設定中
 curl -L -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
 
-mshta vbscript:execute("MsgBox(""ステータスバーのダウンロードが完了するまで待ってVSCodeを再起動してください""):close")
+start /wait mshta vbscript:execute("MsgBox(""ステータスバーのダウンロードが完了するまで待ってVSCodeを再起動してください""):close")
 
 code
 
@@ -447,6 +453,10 @@ EOF
 cp "$IDEROOT_S"/vsdevcmd.cmd "$IDEROOT_S"/vcvarsall.cmd
 
 exit
+
+exit
+
+
 
 ```
 以上、
