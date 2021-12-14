@@ -287,7 +287,7 @@ cd %PYENV%\versions
 for /d %d in (*) do (
   pyenv local %d
   
-  echo zipfile 文字化け不具合の修正をしてます
+  echo zipファイル名日本語の文字化け対策をしてます
   sed -i.bak "s/cp437/cp932/g" %PYENV%\versions\%d\Lib\zipfile.py
   
   echo pipを最新化します
