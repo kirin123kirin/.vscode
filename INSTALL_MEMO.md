@@ -21,16 +21,28 @@
 * IDEROOTはインストール先ディレクトリパス
 * PYTHONVERSIONは pyenvで指定可能なバージョン
 ```Batchfile
-set IDEROOT C:\ide
-set PYTHONVERSION 3.9.6
+set IDEROOT=C:\ide
+set PYTHONVERSION=3.9.6
 
-setx VSCODE_HOME %IDEROOT%\VSCode
-setx USRLOCAL %IDEROOT%\usr\local
-setx PYENV_ROOT %USRLOCAL%\pyenv
-setx PYENV %PYENV_ROOT%\pyenv-win
-setx PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
-setx POETRY_HOME %USRLOCAL%\poetry
-setx NODEJS_HOME %USRLOCAL%\nodejs
+set VSCODE_HOME=%IDEROOT%\VSCode
+set USRLOCAL=%IDEROOT%\usr\local
+set PYENV_ROOT=%USRLOCAL%\pyenv
+set PYENV=%PYENV_ROOT%\pyenv-win
+set PYTHONPATH=%PYENV%\versions\%PYTHONVERSION%
+set POETRY_HOME=%USRLOCAL%\poetry
+set NODEJS_HOME=%USRLOCAL%\nodejs
+
+setx Path "C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm"
+
+setx IDEROOT %IDEROOT%
+setx PYTHONVERSION %PYTHONVERSION%
+setx VSCODE_HOME %VSCODE_HOME%
+setx USRLOCAL %USRLOCAL%
+setx PYENV_ROOT %PYENV_ROOT%
+setx PYENV %PYENV%
+setx PYTHONPATH %PYTHONPATH%
+setx POETRY_HOME %POETRY_HOME%
+setx NODEJS_HOME %NODEJS_HOME%
 
 exit
 
@@ -41,12 +53,6 @@ exit
 <span style="color: red; ">強制的に上書き</span>するので
 <span style="color: red; ">新規ディレクトリの指定</span>を強く推奨する。
 
-### [ローカル変数"GOMI"とは？](https://zenn.dev/ef/articles/fede252753800b12f42b)
-```Batchfile
-mkdir %IDEROOT%\usr\bin
-setx Path "C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm"
-
-```
 ## 2. とりあえず入れるもの
 以下最新版をインストールします
 ### (1) [Windows用Wget](https://sevenzip.osdn.jp/download.html) ※Invoke-WebRequestは遅すぎるのとcurlよりファイルサイズが小さいため
@@ -72,7 +78,7 @@ Function GitLatestVersion ($url, $pattern) {
 ### (2) [7zip](https://sevenzip.osdn.jp/download.html) ※この後の作業で必須
 ```powershell
 wget.exe https://sourceforge.net/projects/sevenzip/files/latest/download -O 7zip.exe
-Start-Process -Verb runas .\7zip.exe
+Start-Process -Verb runas -Wait .\7zip.exe
 if ($?) { del .\7zip.exe }
 
 ```
@@ -82,7 +88,7 @@ if ($?) { del .\7zip.exe }
 $sakuraurl = GitLatestVersion "https://github.com/sakura-editor/sakura/releases" "Win32-Release-Installer.zip"
 wget.exe -O .\sakura.zip $sakuraurl
 7z x .\sakura.zip
-Start-Process -Verb runas .\sakura_install*.exe
+Start-Process -Verb runas -Wait .\sakura_install*.exe
 if ($?) { del .\sakura* }
 
 ```
@@ -96,7 +102,6 @@ echo %IDEROOT%にインストールしてます
 if ($?) { del .\git-for-windows.tar.bz2 }
 7z.exe x -o"${Env:IDEROOT}" .\git-for-windows.tar -aoa -bsp2
 if ($?) { del .\git-for-windows.tar }
-rm -Recurse ${Env:IDEROOT}\'\$PLUGINSDIR\'
 
 exit
 
@@ -105,11 +110,16 @@ exit
   * 「ERROR: Cannot create symbolic link : クライアントは要求された特権を保有していません。 : fd, stderr, stdin, stdout, mtab」
 
 ## 3. 個人的に外せない開発環境
-### (1) 個別コマンドの作成
-1. セットアップ用
-この後の手順でダウンロードしまくる作業用のシェル
+### (1) セットアップ、セットアップコマンドの作成
+* [ローカル変数"MS893GOMI"とは](https://zenn.dev/ef/articles/fede252753800b12f42b)
+    -> WindowsAppsのパスを後ろにズラすことで対処してる 
+* 後の手順で最新版ダウンロード用のワークシェル
+*   -> バッチファイルやpowershellは冗長で貧弱で難解すぎて怒りのbash
 
 ```shell
+set MS893GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
+for /f "usebackq tokens=*" %a in (`echo "%Path%" ^| sed -E 's@"(.*)(;%MS893GOMI:\=\\\%)(.*)"@\1\3\2@g'`) do setx Path "%~a"
+
 bash
 
 cat <<'EOF' > $IDEROOT/cmd/dunzip.sh
@@ -189,8 +199,6 @@ unix2dos $IDEROOT/cmd/dunzip.cmd
 
 cp $IDEROOT/cmd/dunzip.cmd $IDEROOT/cmd/getlatest.cmd
 
-set GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
-for /f "tokens=*" %a in ('echo %Path% | sed -E "s@(.*)(;%GOMI%)(.*)@\1\3\2@g"') do setx Path "%a"
 exit
 
 ```
