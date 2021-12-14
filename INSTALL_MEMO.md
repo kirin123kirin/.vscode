@@ -232,7 +232,7 @@ cd /cmd
 dunzip.sh /usr/bin `getlatest.sh "https://github.com/junegunn/fzf/releases" | grep windows_amd64`
 
 ## ripgrep
-dunzip.sh /usr/bin `getlatest.sh https://github.com/BurntSushi/ripgrep/releases | grep x86_64.*windows-msvc.zip` ripgrep-*/rg.exeem
+dunzip.sh /usr/bin `getlatest.sh https://github.com/BurntSushi/ripgrep/releases | grep x86_64.*windows-msvc.zip` ripgrep-*/rg.exe
 
 ## ripgrep-all
 dunzip.sh /usr/bin `getlatest.sh https://github.com/phiresky/ripgrep-all/releases | grep "x86_64.*windows-msvc.zip"` ripgrep*/rga*.exe
