@@ -24,26 +24,13 @@
 set IDEROOT C:\ide
 set PYTHONVERSION 3.9.6
 
-set VSCODE_HOME %IDEROOT%\VSCode
-set USRLOCAL %IDEROOT%\usr\local
-set PYENV_ROOT %USRLOCAL%\pyenv
-set PYENV %PYENV_ROOT%\pyenv-win
-set PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
-set POETRY_HOME %USRLOCAL%\poetry
-set NODEJS_HOME %USRLOCAL%\nodejs
-
-setx Path "C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm"
-
-setx IDEROOT %IDEROOT%
-setx PYTHONVERSION %PYTHONVERSION%
-setx VSCODE_HOME %VSCODE_HOME%
-setx USRLOCAL %USRLOCAL%
-setx PYENV_ROOT %PYENV_ROOT%
-setx PYENV %PYENV%
-setx PYTHONPATH %PYTHONPATH%
-setx POETRY_HOME %POETRY_HOME%
-setx NODEJS_HOME %NODEJS_HOME%
-
+setx VSCODE_HOME %IDEROOT%\VSCode
+setx USRLOCAL %IDEROOT%\usr\local
+setx PYENV_ROOT %USRLOCAL%\pyenv
+setx PYENV %PYENV_ROOT%\pyenv-win
+setx PYTHONPATH %PYENV%\versions\%PYTHONVERSION%
+setx POETRY_HOME %USRLOCAL%\poetry
+setx NODEJS_HOME %USRLOCAL%\nodejs
 
 exit
 
@@ -55,11 +42,17 @@ exit
 <span style="color: red; ">新規ディレクトリの指定</span>を強く推奨する。
 
 ### [ローカル変数"GOMI"とは？](https://zenn.dev/ef/articles/fede252753800b12f42b)
+```Batchfile
+mkdir %IDEROOT%\usr\bin
+setx Path "C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm"
 
+```
 ## 2. とりあえず入れるもの
 以下最新版をインストールします
 ### (1) [Windows用Wget](https://sevenzip.osdn.jp/download.html) ※Invoke-WebRequestは遅すぎるのとcurlよりファイルサイズが小さいため
 ```powershell
+cd %TEMP%
+
 powershell
 
 $links = (Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/webfolderio/wget-windows/releases").Links
@@ -73,6 +66,7 @@ Function GitLatestVersion ($url, $pattern) {
     $lasthref = wget.exe -nv -qO- $url | Select-String -Pattern ("<a href=.*" + $pattern) | Select-Object -first 1
     [regex]::replace($lasthref, '^.*<a href="(.+)" rel=.*$', { "https://github.com" + $args.groups[1].value })
 }
+
 ```
 
 ### (2) [7zip](https://sevenzip.osdn.jp/download.html) ※この後の作業で必須
@@ -80,6 +74,7 @@ Function GitLatestVersion ($url, $pattern) {
 wget.exe https://sourceforge.net/projects/sevenzip/files/latest/download -O 7zip.exe
 Start-Process -Verb runas .\7zip.exe
 if ($?) { del .\7zip.exe }
+
 ```
 
 ### (3) [サクラエディタ](https://github.com/sakura-editor/sakura/releases) ※好み。なんでもよい
@@ -89,6 +84,7 @@ wget.exe -O .\sakura.zip $sakuraurl
 7z x .\sakura.zip
 Start-Process -Verb runas .\sakura_install*.exe
 if ($?) { del .\sakura* }
+
 ```
 
 ### (4) [Git for Windows](https://github.com/git-for-windows/git/releases) ※Git必須なのと、mingw環境もそこそこ活用するため
