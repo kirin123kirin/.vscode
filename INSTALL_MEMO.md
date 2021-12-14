@@ -33,7 +33,7 @@ set PYTHONPATH=%PYENV%\versions\%PYTHONVERSION%
 set POETRY_HOME=%USRLOCAL%\poetry
 set NODEJS_HOME=%USRLOCAL%\nodejs
 
-setx Path "C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm"
+setx Path "C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm;%USERPROFILE%\AppData\Local\Microsoft\WindowsApps"
 
 setx IDEROOT %IDEROOT%
 setx PYTHONVERSION %PYTHONVERSION%
@@ -48,11 +48,11 @@ setx NODEJS_HOME %NODEJS_HOME%
 exit
 
 ```
-
 ## <span style="color: red; ">注意：IDEROOT</span>に既存のディレクトリを指定したら
 同名のファイル又はディレクトリがある場合には、上書き良否確認などは一切せず
 <span style="color: red; ">強制的に上書き</span>するので
 <span style="color: red; ">新規ディレクトリの指定</span>を強く推奨する。
+
 
 ## 2. まず入れるもの
 以下最新版をインストールします
@@ -130,23 +130,16 @@ cmd /k %TEMP%\vs_BuildTools.exe && rm %TEMP%\vs_BuildTools.exe
 
 ## 3. 個人的に外せない開発環境
 ### (1) セットアップ、セットアップコマンドの作成
-1. [ローカル変数"MS893GOMI"とは](https://zenn.dev/ef/articles/fede252753800b12f42b)
-    -> WindowsAppsのパスを後ろにズラすことで対処してる
-
-2. 後の手順で最新版ダウンロード用のワークシェル
+1. 後の手順で最新版ダウンロード用のワークシェル
     -> バッチファイルやpowershellは冗長で貧弱で難解すぎて怒りのbash
 
-3. お気に入りのコマンドDL
+2. お気に入りのコマンドDL
   a. [fzf](https://github.com/junegunn/fzf#windows)をインストール
   b. [RipGrep](https://github.com/BurntSushi/ripgrep)をインストール
   c. [RipGrep-all](https://github.com/phiresky/ripgrep-all)をインストール
 
 ```shell
-@REM 1. Silent WindowsApps
-set MS893GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
-for /f "usebackq tokens=*" %a in (`echo "%Path%" ^| sed -E 's@"+(.*)(;%MS893GOMI:\=\\\%)(.*)"+@\1\3\2@g'`) do setx Path %a
-
-@REM 2. Make Work shell
+@REM 1. Make Work shell
 bash
 
 cat <<'EOF' > $IDEROOT/cmd/dunzip.sh
@@ -226,6 +219,7 @@ unix2dos $IDEROOT/cmd/dunzip.cmd
 
 cp $IDEROOT/cmd/dunzip.cmd $IDEROOT/cmd/getlatest.cmd
 
+## 2. Favorite commands
 cd /cmd
 
 ## fzf
@@ -308,6 +302,8 @@ pyenv local %PYTHONVERSION%
 
 python -V
 
+pyenv versions
+
 ```
 
 ### (4) [poetry](https://github.com/python-poetry/poetry)インストール
@@ -373,9 +369,7 @@ echo キーバインドの設定中
 curl -L -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
 
 echo ステータスバーのダウンロードが完了するまで待ってVSCodeを再起動してください
-pause
-
-code
+pause && code
 
 
 ```
