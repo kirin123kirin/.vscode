@@ -118,7 +118,7 @@ exit
 
 ```shell
 set MS893GOMI=%LOCALAPPDATA%\Microsoft\WindowsApps
-for /f "usebackq tokens=*" %a in (`echo "%Path%" ^| sed -E 's@"(.*)(;%MS893GOMI:\=\\\%)(.*)"@\1\3\2@g'`) do setx Path "%~a"
+for /f "usebackq tokens=*" %a in (`echo "%Path%" ^| sed -E 's@"+(.*)(;%MS893GOMI:\=\\\%)(.*)"+@\1\3\2@g'`) do setx Path %a
 
 bash
 
