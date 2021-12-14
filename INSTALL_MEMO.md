@@ -236,7 +236,7 @@ for /f "tokens=*" %u in ('getlatest https://github.com/phiresky/ripgrep-all/rele
 ```
 
 
-### (2) [Python(pyenv-win)](https://github.com/pyenv-win/pyenv-win)
+### (2) [Python(pyenv-win)](https://github.com/pyenv-win/pyenv-win)インストール
 
 ```Batchfile
 git clone https://github.com/pyenv-win/pyenv-win.git "%PYENV_ROOT%"
