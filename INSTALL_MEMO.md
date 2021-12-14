@@ -59,12 +59,9 @@ exit
 ## 2. とりあえず入れるもの
 以下最新版をインストールします
 ### (1) [Windows用Wget](https://sevenzip.osdn.jp/download.html) ※Invoke-WebRequestは遅すぎるのとcurlよりファイルサイズが小さいため
-### (2) [7zip](https://sevenzip.osdn.jp/download.html) ※この後の作業で必須
-### (3) [サクラエディタ](https://github.com/sakura-editor/sakura/releases) ※好み。なんでもよい
-### (4) [Git for Windows](https://github.com/git-for-windows/git/releases) ※Git必須なのと、mingw環境もそこそこ活用するため
+```powershell
+powershell
 
-```Batchfile
-## Wget.exe download
 $links = (Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/webfolderio/wget-windows/releases").Links
 $wgeturl = [string]::Concat("https://github.com", ($links.href | Select-String -Pattern ".*64bit-OpenSSL.zip" | Select-Object -first 1) )
 Invoke-WebRequest -UseBasicParsing -Uri $wgeturl -OutFile .\wget.zip
@@ -76,20 +73,26 @@ Function GitLatestVersion ($url, $pattern) {
     $lasthref = wget.exe -nv -qO- $url | Select-String -Pattern ("<a href=.*" + $pattern) | Select-Object -first 1
     [regex]::replace($lasthref, '^.*<a href="(.+)" rel=.*$', { "https://github.com" + $args.groups[1].value })
 }
+```
 
-## 7Zip Install
+### (2) [7zip](https://sevenzip.osdn.jp/download.html) ※この後の作業で必須
+```powershell
 wget.exe https://sourceforge.net/projects/sevenzip/files/latest/download -O 7zip.exe
 Start-Process -Verb runas .\7zip.exe
 if ($?) { del .\7zip.exe }
+```
 
-## Sakura Editor Install
+### (3) [サクラエディタ](https://github.com/sakura-editor/sakura/releases) ※好み。なんでもよい
+```powershell
 $sakuraurl = GitLatestVersion "https://github.com/sakura-editor/sakura/releases" "Win32-Release-Installer.zip"
 wget.exe -O .\sakura.zip $sakuraurl
 7z x .\sakura.zip
 Start-Process -Verb runas .\sakura_install*.exe
 if ($?) { del .\sakura* }
+```
 
-## Git for Windows Install
+### (4) [Git for Windows](https://github.com/git-for-windows/git/releases) ※Git必須なのと、mingw環境もそこそこ活用するため
+```powershell
 $giturl = GitLatestVersion "https://github.com/git-for-windows/git/releases" "Git.*64-bit.tar."
 wget.exe -O .\git-for-windows.tar.bz2 $giturl
 echo %IDEROOT%にインストールしてます
