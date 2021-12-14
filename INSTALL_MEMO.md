@@ -328,6 +328,7 @@ poetry config --list
 ```Batchfile
 echo LLVM インストール...
 for /f "tokens=*" %u in ('getlatest https://github.com/llvm/llvm-project/releases ^| grep win64.exe$') do dunzip %IDEROOT% "%u"
+rm -rf "%IDEROOT%\$PLUGINSDIR"
 
 echo CMake インストール...
 for /f "tokens=*" %u in ('getlatest https://github.com/Kitware/CMake/releases ^| grep windows-x86_64.zip') do dunzip %IDEROOT% "%u" cmake*/*
