@@ -13,7 +13,8 @@
 * SCM : Git for Windows
 * etc : nodejs, 7zip, sakura editor
 
-以降のコマンドライン手順はWindows標準のコマンドプロンプトへのインプット内容
+以降の手順は可能な限りコマンドラインで淡々と実施できるよう考えた。
+Windows標準のコマンドプロンプトを使用する。
 
 ## 1. 環境変数設定
 
@@ -53,12 +54,16 @@ exit
 <span style="color: red; ">強制的に上書き</span>するので
 <span style="color: red; ">新規ディレクトリの指定</span>を強く推奨する。
 
-## 2. とりあえず入れるもの
+## 2. まず入れるもの
 以下最新版をインストールします
-### (1) [Windows用Wget](https://sevenzip.osdn.jp/download.html) ※Invoke-WebRequestは遅すぎるのとcurlよりファイルサイズが小さいため
-### (2) [7zip](https://sevenzip.osdn.jp/download.html) ※この後の作業で必須
-### (3) [サクラエディタ](https://github.com/sakura-editor/sakura/releases) ※好み。なんでもよい
-### (4) [Git for Windows](https://github.com/git-for-windows/git/releases) ※Git必須なのと、mingw環境もそこそこ活用するため
+### (1) [Windows用Wget](https://sevenzip.osdn.jp/download.html) 
+Invoke-WebRequestは遅すぎるのとcurlよりファイルサイズが小さいため
+### (2) [7zip](https://sevenzip.osdn.jp/download.html)
+この後の作業で必須
+### (3) [サクラエディタ](https://github.com/sakura-editor/sakura/releases)
+好み。なんでもよい
+### (4) [Git for Windows](https://github.com/git-for-windows/git/releases)
+Git必須なのと、mingw環境もそこそこ活用するため
 
 ```powershell
 cd %TEMP%
@@ -366,7 +371,11 @@ curl -L -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/k
 echo キーバインドの設定中
 curl -L -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
 
-for /f "delims=" %I in ('start /min /b /wait MSHTA.EXE vbscript:Execute("CreateObject(""Scripting.FileSystemObject"").GetStandardStream(1).Write MsgBox(""ステータスバーのダウンロードが完了するまで待ってVSCodeを再起動してください"",VbMsgBoxSetForeground,""VSCodeセットアップ""):close"^)') do code
+echo ステータスバーのダウンロードが完了するまで待ってVSCodeを再起動してください
+pause
+
+code
+
 
 ```
 
@@ -420,7 +429,7 @@ exit
 
 ---
 以下は別にやらなくても良い。
-### INCLUDE, LIBPATHのユーザ環境変数設定
+### (N) INCLUDE, LIBPATHのユーザ環境変数設定
 Windows SDK? Visual Studioのパスが死ぬほどめんどくさいので
 無理やり環境変数INCLUDE、LIBPATHをぶち込む
 
@@ -428,6 +437,7 @@ Windows SDK? Visual Studioのパスが死ぬほどめんどくさいので
 
 bash
 
+ARCH=x64
 IDEROOT_S=$(echo $IDEROOT | sed "s;\\\;/;g")
 WKIT=$(reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed Roots" | grep "KitsRoot" | sed "s;\\\;/;g" | sed -E "s;.*KitsRoot.+\s\s([^\s].+)/$;\1;g")
 
@@ -443,8 +453,16 @@ LIBPATH=`ls -d "$(ls -d "$WKIT"/Lib/[0-9]* | tail -1)"/*/$ARCH | tr '\n' ';'`
 LIBPATH="${LIBPATH};${MSVC}/lib/${ARCH};${LIBPATH};$IDEROOT_S/lib/clang/${CLANGVERSION}/lib"
 LIBPATH="${LIBPATH};$IDEROOT_S/usr/local/pyenv/pyenv-win/libexec/libs;$IDEROOT_S/usr/lib;$IDEROOT_S/lib"
 
-setx INCLUDE "${INCLUDE}"
-setx LIBPATH "${LIBPATH}"
+cat <<EOF > /tmp/setenv.bat
+@setx INCLUDE "${INCLUDE}"
+@setx LIBPATH "${LIBPATH}"
+@setx MSVC "${MSVC//\//\\}"
+@setx WKIT "${WKIT//\//\\}"
+@setx Path "%Path%;${MSVC//\//\\}\\bin\\Host${ARCH}\\${ARCH}"
+
+EOF
+
+/tmp/setenv.bat && rm /tmp/setenv.bat
 
 cat <<EOF > $IDEROOT_S/vsdevcmd.cmd
 @echo off
