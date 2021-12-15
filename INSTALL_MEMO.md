@@ -86,14 +86,14 @@ Function GitLatestVersion ($url, $pattern) {
 ## 7zip
 wget.exe https://sourceforge.net/projects/sevenzip/files/latest/download -O 7zip.exe
 Start-Process -Verb runas -Wait .\7zip.exe
-if ($?) { del .\7zip.exe }
+if ($?) { del .\7zip.exe } else {Write-Error "Install Failed 7zip";return}
 
 ## sakura editor
 $sakuraurl = GitLatestVersion "https://github.com/sakura-editor/sakura/releases" "Win32-Release-Installer.zip"
 wget.exe -O .\sakura.zip $sakuraurl
 7z x .\sakura.zip
 Start-Process -Verb runas -Wait .\sakura_install*.exe /VERYSILENT
-if ($?) { del .\sakura* }
+if ($?) { del .\sakura* } else { Write-Error "Install Failed Sakura Editor" }
 
 ## Git for Windows
 $giturl = GitLatestVersion "https://github.com/git-for-windows/git/releases" "Git.*64-bit.tar."
@@ -102,7 +102,11 @@ echo %IDEROOT%にインストールしてます
 7z.exe x .\git-for-windows.tar.bz2 -bsp2
 if ($?) { del .\git-for-windows.tar.bz2 }
 7z.exe x -o"${Env:IDEROOT}" .\git-for-windows.tar -aoa -bsp2
-if ($?) { del .\git-for-windows.tar }
+if ($? -And (Test-Path -Path ${Env:IDEROOT}/git-bash.exe) ) { del .\git-for-windows.tar } else {Write-Error "Install Failed Git for windows";return}
+
+## Check and Add Environment $Path(todo)
+#$sevenzippath = reg query HKEY_LOCAL_MACHINE\SOFTWARE\7-Zip |grep Path64 | sed -E 's/.+\\s\{2,\}(.+[^\\\\])\\\\?$/\\1/g'
+#rem reg query HKEY_LOCAL_MACHINE\SOFTWARE\7-Zip |grep Path64 | sed -E 's/.+\s{2,}(.*[^^\\\])[\\\]/\1/g'
 
 exit
 
