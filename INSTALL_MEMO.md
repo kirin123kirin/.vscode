@@ -33,7 +33,7 @@ set PYTHONPATH=%PYENV%\versions\%PYTHONVERSION%
 set POETRY_HOME=%USRLOCAL%\poetry
 set NODEJS_HOME=%USRLOCAL%\nodejs
 
-setx Path "C:\Program Files\7-Zip;C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm;%USERPROFILE%\AppData\Local\Microsoft\WindowsApps"
+setx Path "C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm;%USERPROFILE%\AppData\Local\Microsoft\WindowsApps"
 
 setx IDEROOT %IDEROOT%
 setx PYTHONVERSION %PYTHONVERSION%
@@ -83,10 +83,15 @@ Function GitLatestVersion ($url, $pattern) {
     [regex]::replace($lasthref, '^.*<a href="(.+)" rel=.*$', { "https://github.com" + $args.groups[1].value })
 }
 
+
 ## 7zip
 wget.exe https://sourceforge.net/projects/sevenzip/files/latest/download -O 7zip.exe
 Start-Process -Verb runas -Wait .\7zip.exe
 if ($?) { del .\7zip.exe } else {Write-Error "Install Failed 7zip";return}
+$sevenzippath = reg query HKEY_LOCAL_MACHINE\SOFTWARE\7-Zip |grep Path64 | sed -E 's/.+\\s\{2,\}(.+[^\\\\])\\\\?$/\\1/g'
+Set-Item Env:Path "${sevenzippath};${Env:Path}"
+[environment]::SetEnvironmentVariable("Path", $Env:Path, "User")
+
 
 ## sakura editor
 $sakuraurl = GitLatestVersion "https://github.com/sakura-editor/sakura/releases" "Win32-Release-Installer.zip"
@@ -103,10 +108,6 @@ echo %IDEROOT%にインストールしてます
 if ($?) { del .\git-for-windows.tar.bz2 }
 7z.exe x -o"${Env:IDEROOT}" .\git-for-windows.tar -aoa -bsp2 -x"!dev/fd" -x"!dev/std*" -x"!etc/mtab"
 if ($? -And (Test-Path -Path ${Env:IDEROOT}/git-bash.exe) ) { del .\git-for-windows.tar } else {Write-Error "Install Failed Git for windows";return}
-
-## Check and Add Environment $Path(todo)
-#$sevenzippath = reg query HKEY_LOCAL_MACHINE\SOFTWARE\7-Zip |grep Path64 | sed -E 's/.+\\s\{2,\}(.+[^\\\\])\\\\?$/\\1/g'
-#rem reg query HKEY_LOCAL_MACHINE\SOFTWARE\7-Zip |grep Path64 | sed -E 's/.+\s{2,}(.*[^^\\\])[\\\]/\1/g'
 
 exit
 
