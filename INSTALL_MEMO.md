@@ -88,10 +88,10 @@ Function GitLatestVersion ($url, $pattern) {
 wget.exe https://sourceforge.net/projects/sevenzip/files/latest/download -O 7zip.exe
 Start-Process -Verb runas -Wait .\7zip.exe
 if ($?) { del .\7zip.exe } else {Write-Error "Install Failed 7zip";return}
-$sevenzippath = reg query HKEY_LOCAL_MACHINE\SOFTWARE\7-Zip |grep Path64 | sed -E 's/.+\\s\{2,\}(.+[^\\\\])\\\\?$/\\1/g'
-Set-Item Env:Path "${sevenzippath};${Env:Path}"
-[environment]::SetEnvironmentVariable("Path", $Env:Path, "User")
 
+$sevenzippath = reg query HKEY_LOCAL_MACHINE\SOFTWARE\7-Zip |grep Path64
+$sevenzippath = [regex]::replace($sevenzippath, '.*[^\s]\s{2,}(.+[^\\])\\?', { $args.groups[1].value })
+Set-Item Env:Path "${sevenzippath};${Env:Path}"
 
 ## sakura editor
 $sakuraurl = GitLatestVersion "https://github.com/sakura-editor/sakura/releases" "Win32-Release-Installer.zip"
@@ -99,6 +99,9 @@ wget.exe -O .\sakura.zip $sakuraurl
 7z x .\sakura.zip
 Start-Process -Verb runas -Wait .\sakura_install*.exe /VERYSILENT
 if ($?) { del .\sakura* } else { Write-Error "Install Failed Sakura Editor" }
+$sakurapath = reg query "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" /s | select-string -Pattern "InstallLocation.*sakura"
+$sakurapath = [regex]::replace($sakurapath, '.*[^\s]\s{2,}(.+[^\\])\\?', { $args.groups[1].value })
+Set-Item Env:Path "${sakurapath};${Env:Path}"
 
 ## Git for Windows
 $giturl = GitLatestVersion "https://github.com/git-for-windows/git/releases" "Git.*64-bit.tar."
@@ -108,6 +111,8 @@ echo %IDEROOT%にインストールしてます
 if ($?) { del .\git-for-windows.tar.bz2 }
 7z.exe x -o"${Env:IDEROOT}" .\git-for-windows.tar -aoa -bsp2 -x"!dev/fd" -x"!dev/std*" -x"!etc/mtab"
 if ($? -And (Test-Path -Path ${Env:IDEROOT}/git-bash.exe) ) { del .\git-for-windows.tar } else {Write-Error "Install Failed Git for windows";return}
+
+[environment]::SetEnvironmentVariable("Path", $Env:Path, "User")
 
 exit
 
