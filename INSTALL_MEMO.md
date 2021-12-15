@@ -14,19 +14,22 @@
 * etc : nodejs, 7zip, sakura editor
 
 以降の手順は可能な限りコマンドラインで淡々と実施できるよう考えた。
-Windows標準のコマンドプロンプトを使用する。
+全ての手順はWindows標準のコマンドプロンプトからの入力が前提。
 
 ## 1. 環境変数設定
 
 ### (1) ユーザ環境変数等
 * IDEROOTはインストール先ディレクトリパス
+* DATAROOTはプロジェクトデータを保存するディレクトリ
 * PYTHONVERSIONは pyenvで指定可能なバージョン
 ```Batchfile
-set IDEROOT=C:\ide
+set IDEROOT=C:\ydrive
+set DATAROOT=%IDEROOT%\usr\local\data
 set PYTHONVERSION=3.9.6
 
-set VSCODE_HOME=%IDEROOT%\VSCode
+
 set USRLOCAL=%IDEROOT%\usr\local
+set VSCODE_HOME=%USRLOCAL%\vscode
 set PYENV_ROOT=%USRLOCAL%\pyenv
 set PYENV=%PYENV_ROOT%\pyenv-win
 set PYTHONPATH=%PYENV%\versions\%PYTHONVERSION%
@@ -38,7 +41,6 @@ setx Path "%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPA
 setx IDEROOT %IDEROOT%
 setx PYTHONVERSION %PYTHONVERSION%
 setx VSCODE_HOME %VSCODE_HOME%
-setx USRLOCAL %USRLOCAL%
 setx PYENV_ROOT %PYENV_ROOT%
 setx PYENV %PYENV%
 setx PYTHONPATH %PYTHONPATH%
@@ -58,13 +60,6 @@ exit
 以下最新版をインストールします
 ### (1) [Windows用Wget](https://sevenzip.osdn.jp/download.html) 
 Invoke-WebRequestは遅すぎるのとcurlよりファイルサイズが小さいため
-### (2) [7zip](https://sevenzip.osdn.jp/download.html)
-この後の作業で必須
-### (3) [サクラエディタ](https://github.com/sakura-editor/sakura/releases)
-好み。なんでもよい
-### (4) [Git for Windows](https://github.com/git-for-windows/git/releases)
-Git必須なのと、mingw環境もそこそこ活用するため
-
 ```powershell
 cd %TEMP%
 
@@ -84,7 +79,11 @@ Function GitLatestVersion ($url, $pattern) {
 }
 
 
-## 7zip
+```
+
+### (2) [7zip](https://sevenzip.osdn.jp/download.html)
+この後の作業で必須
+```powershell
 wget.exe https://sourceforge.net/projects/sevenzip/files/latest/download -O 7zip.exe
 Start-Process -Verb runas -Wait .\7zip.exe
 if ($?) { del .\7zip.exe } else {Write-Error "Install Failed 7zip";return}
@@ -95,7 +94,13 @@ if (! (Test-Path -Path ${Env:IDEROOT}\usr\bin\7z.exe) ) {Copy-Item $sevenzippath
 
 # Set-Item Env:Path "${sevenzippath};${Env:Path}"
 
-## sakura editor
+
+```
+
+### (3) [サクラエディタ](https://github.com/sakura-editor/sakura/releases)
+好み。なんでもよい
+
+```powershell
 $sakuraurl = GitLatestVersion "https://github.com/sakura-editor/sakura/releases" "Win32-Release-Installer.zip"
 wget.exe -O .\sakura.zip $sakuraurl
 7z x .\sakura.zip
@@ -105,7 +110,13 @@ $sakurapath = reg query "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windo
 $sakurapath = [regex]::replace($sakurapath, '.*[^\s]\s{2,}(.+[^\\])\\?', { $args.groups[1].value })
 Set-Item Env:Path "${Env:Path};${sakurapath}"
 
-## Git for Windows
+
+```
+
+### (4) [Git for Windows](https://github.com/git-for-windows/git/releases)
+Git必須なのと、mingw環境もそこそこ活用するため
+
+```powershell
 $giturl = GitLatestVersion "https://github.com/git-for-windows/git/releases" "Git.*64-bit.tar."
 wget.exe -O .\git-for-windows.tar.bz2 $giturl
 echo %IDEROOT%にインストールしてます
@@ -138,7 +149,7 @@ cmd /k %TEMP%\vs_BuildTools.exe && rm %TEMP%\vs_BuildTools.exe
 ```
 
 
-## 3. 個人的に外せない開発環境
+## 3. 開発環境構築
 ### (1) セットアップ、セットアップコマンドの作成
 1. 後の手順で最新版ダウンロード用のワークシェル
     -> バッチファイルやpowershellは冗長で貧弱で難解すぎて怒りのbash
@@ -379,7 +390,7 @@ echo キーバインドの設定中
 curl -L -o %APPDATA%\Code\User\keybindings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/_keybindings.json
 
 echo ステータスバーのダウンロードが完了するまで待ってVSCodeを再起動してください
-pause && code
+pause && code %DATAROOT%
 
 
 ```
@@ -469,17 +480,41 @@ EOF
 
 /tmp/setenv.bat && rm /tmp/setenv.bat
 
-cat <<EOF > $IDEROOT_S/vsdevcmd.cmd
+cat <<EOF > "$IDEROOT_S"/bin/vsdevcmd.cmd
 @echo off
 @call "$MSBUILD/Common7/Tools/VsDevCmd.bat" %*
 EOF
-cp "$IDEROOT_S"/vsdevcmd.cmd "$IDEROOT_S"/vcvarsall.cmd
+cp "$IDEROOT_S"/bin/vsdevcmd.cmd "$IDEROOT_S"/bin/vcvarsall.cmd
 
 exit
 
 exit
-
 
 
 ```
+
+## その他
+### ドライブマウントについて
+コマンドラインからドライブレターをマウントする例(%IDEROOT%をYドライブとしてマウント）
+```Batchfile
+subst Y: %IDEROOT%
+
+```
+
+しかし再起動したらYドライブへのマウントが消えてしまう。
+
+$IDEROOTをYドライブとして永続的に割り当てたい場合は以下２つの方法がある。
+
+方法1. ユーザ別割り当て
+```Batchfile
+echo subst Y: "%IDEROOT%" > "%APPDATA%\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\subst.bat"
+
+```
+
+方法2. レジストリにマウント情報保存する例(管理者権限プロンプト）
+```Batchfile
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\DOS Devices" /v "E:" /t REG_SZ /d "\??\%IDEROOT%"
+
+```
+
 以上、
