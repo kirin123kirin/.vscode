@@ -19,6 +19,7 @@
 ## 1. 環境変数設定
 
 ### (1) ユーザ環境変数等
+
 ```Batchfile
 
 @rem IDEROOTはインストール先ルートディレクトリのパス
@@ -55,6 +56,7 @@ setx NODEJS_HOME %NODEJS_HOME%
 exit
 
 ```
+
 ## <span style="color: red; ">注意：IDEROOT</span>に既存のディレクトリを指定したら
 同名のファイル又はディレクトリがある場合には、上書き良否確認などは一切せず
 <span style="color: red; ">強制的に上書き</span>するので
@@ -65,6 +67,7 @@ exit
 以下最新版をインストールします
 ### (1) [Windows用Wget](https://sevenzip.osdn.jp/download.html) 
 Invoke-WebRequestは遅すぎるのとcurlよりファイルサイズが小さいため
+
 ```powershell
 
 mkdir %DATAROOT%
@@ -91,6 +94,7 @@ Function GitLatestVersion ($url, $pattern) {
 
 ### (2) [7zip](https://sevenzip.osdn.jp/download.html)
 この後の作業で必須
+
 ```powershell
 wget.exe https://sourceforge.net/projects/sevenzip/files/latest/download -O 7zip.exe
 Start-Process -Verb runas -Wait .\7zip.exe
@@ -336,6 +340,7 @@ pyenv versions
 ```
 
 ### (4) [poetry](https://github.com/python-poetry/poetry)インストール
+
 ```Batchfile
 curl -L https://install.python-poetry.org | python -
 poetry --version
@@ -364,6 +369,7 @@ for /f "tokens=*" %u in ('getlatest https://github.com/ninja-build/ninja/release
 ```
 
 ### (6) 必要なら[Node.js](https://nodejs.org/ja/)インストール
+
 ```Batchfile
 for /f "tokens=*" %u in ('getlatest https://nodejs.org/dist') do dunzip %NODEJS_HOME% "%u" node-v*/*
 
@@ -504,6 +510,7 @@ exit
 ## その他
 ### ドライブマウントについて
 コマンドラインからドライブレターをマウントする例(%IDEROOT%をYドライブとしてマウント）
+
 ```Batchfile
 subst Y: %IDEROOT%
 
@@ -514,6 +521,7 @@ subst Y: %IDEROOT%
 $IDEROOTをYドライブとして永続的に割り当てたい場合は以下２つの方法がある。
 
 方法1. ユーザ別割り当て
+
 ```Batchfile
 echo subst Y: "%IDEROOT%" > "%APPDATA%\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\subst.bat"
 
