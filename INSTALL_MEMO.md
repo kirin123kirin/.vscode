@@ -62,6 +62,9 @@ exit
 ### (1) [Windows用Wget](https://sevenzip.osdn.jp/download.html) 
 Invoke-WebRequestは遅すぎるのとcurlよりファイルサイズが小さいため
 ```powershell
+
+mkdir %DATAROOT%
+
 cd %TEMP%
 
 powershell
