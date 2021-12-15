@@ -19,15 +19,18 @@
 ## 1. 環境変数設定
 
 ### (1) ユーザ環境変数等
-* IDEROOTはインストール先ディレクトリパス
-* DATAROOTはプロジェクトデータを保存するディレクトリ
-* PYTHONVERSIONは pyenvで指定可能なバージョン
 ```Batchfile
+
+@rem IDEROOTはインストール先ルートディレクトリのパス
 set IDEROOT=C:\ydrive
+
+@rem DATAROOTはプロジェクトデータを保存するディレクトリ
 set DATAROOT=%IDEROOT%\usr\local\data
+
+@rem PYTHONVERSIONは グローバル使用するPythonバージョン(pyenvでインストール可能なpythonバージョン`pyenv install --list` であること)
 set PYTHONVERSION=3.9.6
 
-
+@rem その他必要になってくるパス等を追加
 set USRLOCAL=%IDEROOT%\usr\local
 set VSCODE_HOME=%USRLOCAL%\vscode
 set PYENV_ROOT=%USRLOCAL%\pyenv
@@ -41,6 +44,7 @@ setx Path "%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPA
 setx IDEROOT %IDEROOT%
 setx DATAROOT %DATAROOT%
 setx PYTHONVERSION %PYTHONVERSION%
+
 setx VSCODE_HOME %VSCODE_HOME%
 setx PYENV_ROOT %PYENV_ROOT%
 setx PYENV %PYENV%
