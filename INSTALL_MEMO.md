@@ -101,7 +101,7 @@ wget.exe -O .\git-for-windows.tar.bz2 $giturl
 echo %IDEROOT%にインストールしてます
 7z.exe x .\git-for-windows.tar.bz2 -bsp2
 if ($?) { del .\git-for-windows.tar.bz2 }
-7z.exe x -o"${Env:IDEROOT}" .\git-for-windows.tar -aoa -bsp2
+7z.exe x -o"${Env:IDEROOT}" .\git-for-windows.tar -aoa -bsp2 -x"!dev/fd" -x"!dev/std*" -x"!etc/mtab"
 if ($? -And (Test-Path -Path ${Env:IDEROOT}/git-bash.exe) ) { del .\git-for-windows.tar } else {Write-Error "Install Failed Git for windows";return}
 
 ## Check and Add Environment $Path(todo)
@@ -111,8 +111,6 @@ if ($? -And (Test-Path -Path ${Env:IDEROOT}/git-bash.exe) ) { del .\git-for-wind
 exit
 
 ```
-* このエラーは気にしない
-  * 「ERROR: Cannot create symbolic link : クライアントは要求された特権を保有していません。 : fd, stderr, stdin, stdout, mtab」
 
 ### (5) C/C++ Windows headers & libraries
 #### [Microsoft BuildTools](https://visualstudio.microsoft.com/ja/visual-cpp-build-tools/)
