@@ -33,7 +33,7 @@ set PYTHONPATH=%PYENV%\versions\%PYTHONVERSION%
 set POETRY_HOME=%USRLOCAL%\poetry
 set NODEJS_HOME=%USRLOCAL%\nodejs
 
-setx Path "C:\Program Files (x86)\sakura;%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm;%USERPROFILE%\AppData\Local\Microsoft\WindowsApps"
+setx Path "%PYENV%\bin;%PYENV%\shims;%PYTHONPATH%;%PYTHONPATH%\Scripts;%PYTHONPATH%\Tools\scripts;%POETRY_HOME%\bin;%IDEROOT%\bin;%IDEROOT%\cmd;%IDEROOT%\mingw64\bin;%IDEROOT%\usr\bin;%VSCODE_HOME%\bin;%NODEJS_HOME%;%APPDATA%\npm;%USERPROFILE%\AppData\Local\Microsoft\WindowsApps"
 
 setx IDEROOT %IDEROOT%
 setx PYTHONVERSION %PYTHONVERSION%
@@ -89,9 +89,11 @@ wget.exe https://sourceforge.net/projects/sevenzip/files/latest/download -O 7zip
 Start-Process -Verb runas -Wait .\7zip.exe
 if ($?) { del .\7zip.exe } else {Write-Error "Install Failed 7zip";return}
 
-$sevenzippath = reg query HKEY_LOCAL_MACHINE\SOFTWARE\7-Zip |grep Path64
+$sevenzippath = reg query HKEY_LOCAL_MACHINE\SOFTWARE\7-Zip |select-string Path64
 $sevenzippath = [regex]::replace($sevenzippath, '.*[^\s]\s{2,}(.+[^\\])\\?', { $args.groups[1].value })
-Set-Item Env:Path "${sevenzippath};${Env:Path}"
+if (! (Test-Path -Path ${Env:IDEROOT}\usr\bin\7z.exe) ) {Copy-Item $sevenzippath\* -Recurse ${Env:IDEROOT}\usr\bin}
+
+# Set-Item Env:Path "${sevenzippath};${Env:Path}"
 
 ## sakura editor
 $sakuraurl = GitLatestVersion "https://github.com/sakura-editor/sakura/releases" "Win32-Release-Installer.zip"
@@ -101,7 +103,7 @@ Start-Process -Verb runas -Wait .\sakura_install*.exe /VERYSILENT
 if ($?) { del .\sakura* } else { Write-Error "Install Failed Sakura Editor" }
 $sakurapath = reg query "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" /s | select-string -Pattern "InstallLocation.*sakura"
 $sakurapath = [regex]::replace($sakurapath, '.*[^\s]\s{2,}(.+[^\\])\\?', { $args.groups[1].value })
-Set-Item Env:Path "${sakurapath};${Env:Path}"
+Set-Item Env:Path "${Env:Path};${sakurapath}"
 
 ## Git for Windows
 $giturl = GitLatestVersion "https://github.com/git-for-windows/git/releases" "Git.*64-bit.tar."
