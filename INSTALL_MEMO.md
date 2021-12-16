@@ -173,7 +173,7 @@ cmd /k %TEMP%\vs_BuildTools.exe && rm %TEMP%\vs_BuildTools.exe
 
 ```shell
 @REM 1. Make Work shell
-bash
+%IDEROOT%\bin\bash.exe
 
 cat <<'EOF' > $IDEROOT/cmd/dunzip.sh
 #!bash
@@ -242,7 +242,7 @@ EOF
 cat <<'EOF' > $IDEROOT/cmd/dunzip.cmd
 @echo off
 @rem This Script is Simply Transfer to (Same Filename).sh
-bash %~dp0\%~n0.sh %*
+%IDEROOT%\bin\bash.exe %~dp0\%~n0.sh %*
 EOF
 
 
@@ -395,7 +395,7 @@ cp %SHORTCUT% %USERPROFILE%\Desktop
 
 ```Batchfile
 echo 拡張機能をインストールします
-bash -c "curl -sSL https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt | xargs -L1 code --install-extension"
+%IDEROOT%\bin\bash.exe -c "curl -sSL https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt | xargs -L1 code --install-extension"
 
 echo 全般設定の設定中
 curl -L -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/settings.json
@@ -415,7 +415,7 @@ echo ステータスバーのダウンロードが完了するまで待ってVSC
 ```shell
 echo git configとpypircの設定を行います。
 
-bash
+%IDEROOT%\bin\bash.exe
 
 cat<<'EOF' > ~/.gitconfig
 [user]
@@ -465,7 +465,7 @@ Windows SDK? Visual Studioのパスが死ぬほどめんどくさいので
 
 ```shell
 
-bash
+%IDEROOT%\bin\bash.exe
 
 ARCH=x64
 IDEROOT_S=$(echo $IDEROOT | sed "s;\\\;/;g")
