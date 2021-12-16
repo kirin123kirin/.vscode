@@ -395,7 +395,7 @@ cp %SHORTCUT% %USERPROFILE%\Desktop
 
 ```Batchfile
 echo 拡張機能をインストールします
-bash -c 'curl -sSL https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt | xargs -L1 code --install-extension'
+for /f "tokens=*" %x in ('curl -sSL https://raw.githubusercontent.com/kirin123kirin/.vscode/main/vscode_extensions.txt') do code --install-extension %x
 
 echo 全般設定の設定中
 curl -L -o %APPDATA%\Code\User\settings.json https://raw.githubusercontent.com/kirin123kirin/.vscode/main/settings.json

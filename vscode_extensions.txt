@@ -1,9 +1,7 @@
 abusaidm.html-snippets
-aslamanver.vsc-export
 austin.code-gnu-global
 cschlosser.doxdocgen
 eamodio.gitlens
-formulahendry.code-runner
 guyskk.language-cython
 jeff-hykin.better-cpp-syntax
 MS-CEINTL.vscode-language-pack-ja
