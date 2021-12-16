@@ -528,6 +528,7 @@ echo subst Y: "%IDEROOT%" > "%APPDATA%\Roaming\Microsoft\Windows\Start Menu\Prog
 ```
 
 方法2. レジストリにマウント情報保存する例(管理者権限プロンプト）
+
 ```Batchfile
 reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\DOS Devices" /v "E:" /t REG_SZ /d "\??\%IDEROOT%"
 
