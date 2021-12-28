@@ -20,7 +20,7 @@
   "configurations": [
     {
       "name": "C++ Debug",
-      "type": "lldb",
+      "type": "cppvsdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build/${fileBasenameNoExtension}",
       "windows": {
@@ -31,7 +31,7 @@
       "cwd": "${fileDirname}",
       "environment": [],
       "preLaunchTask": "Debug C++",
-      "console": "integratedTerminal"
+      // "console": "integratedTerminal"
     },
     {
       "name": "C++ Release",
@@ -50,7 +50,7 @@
     },
     {
       "name": "Instant Debug from py",
-      "type": "lldb",
+      "type": "cppvsdbg",
       "request": "launch",
       "program": "python3",
       "windows": {
@@ -62,7 +62,7 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
-      "console": "integratedTerminal",
+      // "console": "integratedTerminal",
       "preLaunchTask": "Debug Setup.py"
     },
     {
@@ -94,7 +94,7 @@
     },
     {
       "name": "Debug Setup.py",
-      "type": "lldb",
+      "type": "cppvsdbg",
       "request": "launch",
       "program": "python3",
       "windows": {
@@ -109,7 +109,7 @@
       "cwd": "${workspaceFolder}/build",
       "environment": [],
       "preLaunchTask": "Debug Setup.py",
-      "console": "integratedTerminal"
+      // "console": "integratedTerminal"
     },
     {
       "name": "Release Setup.py",
