@@ -31,7 +31,7 @@
       "cwd": "${fileDirname}",
       "environment": [],
       "preLaunchTask": "Debug C++",
-      // "console": "integratedTerminal"
+      "console": "integratedTerminal"
     },
     {
       "name": "C++ Release",
@@ -62,7 +62,7 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
-      // "console": "integratedTerminal",
+      "console": "integratedTerminal",
       "preLaunchTask": "Debug Setup.py"
     },
     {
@@ -109,7 +109,7 @@
       "cwd": "${workspaceFolder}/build",
       "environment": [],
       "preLaunchTask": "Debug Setup.py",
-      // "console": "integratedTerminal"
+      "console": "integratedTerminal"
     },
     {
       "name": "Release Setup.py",
