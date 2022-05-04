@@ -29,7 +29,7 @@
     "cwd": "${workspaceFolder}"
   },
   "problemMatcher": [
-    "$gcc"
+    "$msCompile"
   ],
   "tasks": [
     {
@@ -127,25 +127,25 @@
         "-G",
         "Ninja",
         "-S",
-        "${workspaceFolder}",
+        "${fileDirname}",
         "-B",
-        "${workspaceFolder}/build",
+        "${fileDirname}/build",
         "-DCMAKE_VERBOSE_MAKEFILE=1",
-        "-DCMAKE_INSTALL_PREFIX=${workspaceFolder}/build/cmake-install",
+        "-DCMAKE_INSTALL_PREFIX=${fileDirname}/build/cmake-install",
         "-DCMAKE_BUILD_TYPE=Debug",
         "-DCMAKE_C_COMPILER=clang",
         "-DCMAKE_CXX_COMPILER=clang++",
-        "-DCMAKE_C_FLAGS=\"-g -O0\"",
-        "-DCMAKE_CXX_FLAGS=\"-g -O0\"",
+        "-DCMAKE_C_FLAGS=\"-g -O0 -S -masm=intel -save-temps=obj\"",
+        "-DCMAKE_CXX_FLAGS=\"-g -O0 -S -masm=intel -save-temps=obj\"",
         "-DCMAKE_FIND_DEBUG_MODE=1",
         "&&",
         "cmake",
         "--build",
-        "${workspaceFolder}/build",
+        "${fileDirname}/build",
         "&&",
         "cmake",
         "--install",
-        "${workspaceFolder}/build"
+        "${fileDirname}/build"
       ],
       "windows": {
         "options": {
@@ -161,7 +161,7 @@
         }
       },
       "problemMatcher": {
-        "owner": "gcc",
+        "owner": "$gcc",
         "fileLocation": "absolute",
         "pattern": {
           "regexp": "^(.*):(\\d+):(\\d+):\\s+(.*):\\s+(.*)$",
@@ -176,7 +176,7 @@
       },
       "dependsOrder": "sequence",
       "dependsOn": [
-        "CLEANUP"
+        // "CLEANUP"
       ],
     },
     {
@@ -188,24 +188,24 @@
         "-G",
         "Ninja",
         "-S",
-        "${workspaceFolder}",
+        "${fileDirname}",
         "-B",
-        "${workspaceFolder}/build",
+        "${fileDirname}/build",
         "-DCMAKE_VERBOSE_MAKEFILE=1",
-        "-DCMAKE_INSTALL_PREFIX=${workspaceFolder}/build/cmake-install",
+        "-DCMAKE_INSTALL_PREFIX=${fileDirname}/build/cmake-install",
         "-DCMAKE_BUILD_TYPE=Release",
         "-DCMAKE_C_COMPILER=clang",
         "-DCMAKE_CXX_COMPILER=clang++",
-        "-DCMAKE_C_FLAGS=\"-g -O2\"",
-        "-DCMAKE_CXX_FLAGS=\"-g -O2\"",
+        "-DCMAKE_C_FLAGS=\"-g -O0 -S -masm=intel -save-temps=obj\"",
+        "-DCMAKE_CXX_FLAGS=\"-g -O0 -S -masm=intel -save-temps=obj\"",
         "&&",
         "cmake",
         "--build",
-        "${workspaceFolder}/build",
+        "${fileDirname}/build",
         "&&",
         "cmake",
         "--install",
-        "${workspaceFolder}/build"
+        "${fileDirname}/build"
       ],
       "windows": {
         "options": {
@@ -221,7 +221,7 @@
         }
       },
       "problemMatcher": {
-        "owner": "gcc",
+        "owner": "$gcc",
         "fileLocation": "absolute",
         "pattern": {
           "regexp": "^(.*):(\\d+):(\\d+):\\s+(.*):\\s+(.*)$",
@@ -249,10 +249,15 @@
       "windows": {
         "args": [
           "-v",
+          "-S",
+          "-masm=intel",
+          "-save-temps=obj",
           "-D_${workspaceFolderBasename}_EXPORTS",
           "-I${env:PYTHONPATH}/include",
           "-I${workspaceFolder}/*/include",
           "-I${workspaceFolder}/build/external/include",
+          "-I${env:APPROOT}/usr/local/include",
+          "-I${workspaceFolder}/${workspaceFolderBasename}/cutil",
           "-IC:/usr/lib/boost",
           "-g",
           "-Xclang",
@@ -263,7 +268,7 @@
           "-D_MT",
           "-Xclang",
           "--dependent-lib=msvcrtd",
-          "-std=gnu++14",
+          "-std=c++14",
           "-Wall",
           "-MD",
           "-MT",
@@ -322,6 +327,9 @@
       },
       "args": [
         "-v",
+        "-S",
+        "-masm=intel",
+        "-save-temps=obj",
         "-D_${workspaceFolderBasename}_EXPORTS",
         "-g",
         "-O0",
@@ -389,10 +397,15 @@
       "windows": {
         "args": [
           "-v",
+          "-S",
+          "-masm=intel",
+          "-save-temps=obj",
           "-D_${workspaceFolderBasename}_EXPORTS",
           "-I${env:PYTHONPATH}/include",
           "-I${workspaceFolder}/extern/*/",
           "-I${workspaceFolder}/extern/*/include",
+          "-I${env:APPROOT}/usr/local/include",
+          "-I${workspaceFolder}/${workspaceFolderBasename}/cutil",
           "-IC:/usr/lib/boost",
           "-g",
           "-Xclang",
@@ -403,7 +416,7 @@
           "-D_MT",
           "-Xclang",
           "--dependent-lib=msvcrtd",
-          "-std=gnu++14",
+          "-std=c++14",
           "-Wall",
           "-MD",
           "-MT",
@@ -432,7 +445,6 @@
           "-Xclang",
           "--dependent-lib=msvcrtd",
           "${workspaceFolder}/build/${fileBasenameNoExtension}.cpp.obj",
-          "${env:PYTHONPATH}/libs/python37_d.lib",
           "-o",
           "${workspaceFolder}/build/${fileBasenameNoExtension}.exe",
           "-Xlinker",
@@ -461,6 +473,9 @@
       },
       "args": [
         "-v",
+        "-S",
+        "-masm=intel",
+        "-save-temps=obj",
         "-D_${workspaceFolderBasename}_EXPORTS",
         "-g",
         "-D_DEBUG", // <- require
