@@ -1,7 +1,9 @@
 abusaidm.html-snippets
 adrianwilczynski.open-folder-in-explorer
 austin.code-gnu-global
+bierner.markdown-mermaid
 BMW-CDC-Team.asm-enable-debug
+bpruitt-goddard.mermaid-markdown-syntax-highlighting
 cschlosser.doxdocgen
 eamodio.gitlens
 GrapeCity.gc-excelviewer
@@ -30,6 +32,7 @@ ms-vscode.cpptools-themes
 ms-vscode.hexeditor
 ms-vscode.live-server
 ms-vscode.remote-explorer
+mscgenjs.vscode-mscgen
 NateAGeek.memory-viewer
 rogalmic.bash-debug
 shd101wyy.markdown-preview-enhanced
