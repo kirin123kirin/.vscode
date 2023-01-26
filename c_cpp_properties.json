@@ -5,6 +5,7 @@
             "includePath": [
                 ".",
                 "${env:INCLUDE}",
+                "${env:PYTHONPATH}/libs",
                 "${workspaceFolder}/**"
             ],
             "defines": [
@@ -13,8 +14,8 @@
                 "_UNICODE"
             ],
             "compilerPath": "${env:USRLOCAL}/bin/clang++.exe",
-            "cStandard": "c11",
-            "cppStandard": "c++14",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
             "intelliSenseMode": "windows-clang-x64",
             "configurationProvider": "ms-vscode.cmake-tools"
         },
@@ -38,8 +39,8 @@
                 "_UNICODE"
             ],
             "compilerPath": "/usr/bin/clang++",
-            "cStandard": "c11",
-            "cppStandard": "c++14",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
             "intelliSenseMode": "linux-clang-x64"
         }
     ],
