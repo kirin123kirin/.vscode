@@ -13,7 +13,7 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "${env:USRLOCAL}/bin/clang++.exe",
+            "compilerPath": "clang++.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "windows-clang-x64",
