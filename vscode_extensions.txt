@@ -41,3 +41,5 @@ twxs.cmake
 vadimcn.vscode-lldb
 VisualStudioExptTeam.intellicode-api-usage-examples
 VisualStudioExptTeam.vscodeintellicode
+analytic-signal.snippets-geojson
+swallow.geojson-io-for-vscode
