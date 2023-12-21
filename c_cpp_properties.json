@@ -4,8 +4,11 @@
             "name": "win64_d",
             "includePath": [
                 ".",
-                "${env:INCLUDE}",
-                "${env:PYTHONPATH}/libs",
+                "C:\\usr\\local\\LLVM\\include\\clang-c",
+                "C:\\usr\\local\\LLVM\\include\\llvm-c",
+                "${env:PYTHONPATH}\\include",
+                "${env:APPROOT}\\usr\\local\\include",
+                "C:\\usr\\lib\\boost",
                 "${workspaceFolder}/**"
             ],
             "defines": [
@@ -13,9 +16,9 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "clang++.exe",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
+            "compilerPath": "C:/usr/local/LLVM/bin/clang++.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
             "intelliSenseMode": "windows-clang-x64",
             "configurationProvider": "ms-vscode.cmake-tools"
         },
@@ -39,9 +42,10 @@
                 "_UNICODE"
             ],
             "compilerPath": "/usr/bin/clang++",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "linux-clang-x64"
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4
