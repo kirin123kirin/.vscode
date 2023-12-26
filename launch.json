@@ -189,6 +189,7 @@
       "console": "internalConsole",
       "preLaunchTask": "linux : Debug Setup.py"
     },
+    
     {
       "name": "linux : Instant Release from py",
       "type": "lldb",
