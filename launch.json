@@ -34,7 +34,7 @@
       "stopAtEntry": false,
       "cwd": "${fileDirname}",
       "environment": [],
-      "preLaunchTask": "win : Debug C++",
+      "preLaunchTask": "Debug C++",
       "console": "internalConsole"
     },
     {
@@ -46,7 +46,7 @@
       "stopAtEntry": false,
       "cwd": "${fileDirname}",
       "environment": [],
-      "preLaunchTask": "win : Release C++",
+      "preLaunchTask": "Release C++",
       "console": "internalConsole"
     },
     {
@@ -61,7 +61,7 @@
       "cwd": "${workspaceFolder}",
       "environment": [],
       "console": "internalConsole",
-      "preLaunchTask": "win : Debug Setup.py"
+      "preLaunchTask": "Debug Setup.py"
     },
     {
       "name": "Win : Instant Release from py",
@@ -75,7 +75,7 @@
       "cwd": "${workspaceFolder}",
       "environment": [],
       "console": "internalConsole",
-      "preLaunchTask": "win : Release Setup.py"
+      "preLaunchTask": "Release Setup.py"
     },
     {
       "name": "win : Debug Setup.py",
@@ -90,7 +90,7 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}/build",
       "environment": [],
-      "preLaunchTask": "win : Debug Setup.py",
+      "preLaunchTask": "Debug Setup.py",
       "console": "internalConsole"
     },
     {
@@ -106,7 +106,7 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}/build",
       "environment": [],
-      "preLaunchTask": "win : Release Setup.py",
+      "preLaunchTask": "Release Setup.py",
       "console": "internalConsole"
     },
     {
