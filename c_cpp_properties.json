@@ -17,8 +17,8 @@
                 "_UNICODE"
             ],
             "compilerPath": "Y:/bin/clang++.exe",
-            "cStandard": "c11",
-            "cppStandard": "c++14",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
             "intelliSenseMode": "windows-clang-x64",
             "configurationProvider": "ms-vscode.cmake-tools"
         },
@@ -26,11 +26,10 @@
             "name": "linux64_d",
             "includePath": [
                 ".",
-                "/usr/include/python3.9m",
-                "/usr/include/python3.8m",
-                "/usr/include/python3.7m",
-                "/usr/include/python3.6m",
-                "/usr/include/python2.7m",
+                "/usr/include/python3.13",
+                "/usr/include/python3.12",
+                "/usr/include/python3.11",
+                "/usr/include/python3.10",
                 "/usr/include/boost",
                 "/usr/local/include",
                 "/usr/include",
@@ -42,8 +41,8 @@
                 "_UNICODE"
             ],
             "compilerPath": "/usr/bin/clang++",
-            "cStandard": "c11",
-            "cppStandard": "c++14",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
             "intelliSenseMode": "linux-clang-x64",
             "configurationProvider": "ms-vscode.cmake-tools"
         }

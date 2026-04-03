@@ -29,7 +29,7 @@ set IDEROOT=C:\ydrive
 set DATAROOT=%IDEROOT%\usr\local\data
 
 @rem PYTHONVERSIONは グローバル使用するPythonバージョン(pyenvでインストール可能なpythonバージョン`pyenv install --list` であること)
-set PYTHONVERSION=3.9.6
+set PYTHONVERSION=3.12.9
 
 @rem その他必要になってくるパス等を追加
 set USRLOCAL=%IDEROOT%\usr\local

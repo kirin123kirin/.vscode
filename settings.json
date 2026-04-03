@@ -142,28 +142,27 @@
     // "C_Cpp.default.compilerPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29910\\bin\\HostX64\\x64\\cl.exe",
     "C_Cpp.default.compilerPath": "C:\\usr\\local\\LLVM\bin\\clang++.exe",
     //Python
-    "python.pythonPath": "${env:PYTHONPATH}/python.exe",
+    "python.defaultInterpreterPath": "${env:PYTHONPATH}/python.exe",
     "python.terminal.launchArgs": [
         "-c",
         "from IPython import start_ipython; start_ipython()",
         "-i",
         "--no-banner"
     ],
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": false,
-    "python.linting.flake8Enabled": true,
-    "python.linting.lintOnSave": true,
-    "python.linting.flake8Args": [
+    "flake8.enabled": true,
+    "flake8.args": [
         "--max-line-length=160",
         "--ignore=E302,W504,W391,E902",
         "--exclude=test/*,.*",
         "max-complexity=10"
     ],
-    "python.formatting.provider": "autopep8",
-    "python.formatting.autopep8Args": [
+    "autopep8.args": [
         "--max-line-length=160"
         //"--aggressive", "--aggressive",
     ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8"
+    },
     "code-runner.executorMap": {
         "javascript": "node",
         "java": "cd $dir && javac $fileName && java $fileNameWithoutExt",
@@ -230,7 +229,6 @@
     "debug.openExplorerOnEnd": true,
     "git.confirmSync": false,
     "git.autofetch": true,
-    "python.experiments.optOutFrom": [],
     "debug.openDebug": "openOnSessionStart",
     "terminal.integrated.tabs.enabled": true,
     "editor.acceptSuggestionOnEnter": "smart",
